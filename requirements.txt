@@ -34,3 +34,14 @@ typing_extensions==4.11.0
 tzdata==2024.1
 urllib3==2.2.1
 wandb==0.17.0
+
+
+asgiref
+Django
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+PyJWT
+sqlparse
+psycopg2-binary
+python-dotenv
