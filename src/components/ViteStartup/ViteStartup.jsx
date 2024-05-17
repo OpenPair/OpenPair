@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import reactLogo from '../../assets/react.svg'
 import viteLogo from '/vite.svg'
+import api from '../../hooks/api'
 
 function ViteStartup(){
     const [count, setCount] = useState(0)
+
+    const handleClick = (count) => {
+        setCount(count + 1)
+        api.post('api/session/', {count: count + 1})
+        .then(response => console.log('Alright!')).catch(err => console.log(err))
+
+    }
     return (
         <>
             <div>
@@ -16,7 +24,7 @@ function ViteStartup(){
             </div>
             <h1>Vite + React</h1>
             <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
+                <button onClick={() => handleClick(count)}>
                     count is {count}
                 </button>
                 <p>
