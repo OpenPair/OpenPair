@@ -1,10 +1,10 @@
-const express = require('express');
-const {
-  rejectUnauthenticated,
-} = require('../modules/authentication-middleware');
-const encryptLib = require('../modules/encryption');
-const pool = require('../modules/pool');
-const userStrategy = require('../strategies/user.strategy');
+import express from 'express';
+import 
+  rejectUnauthenticated
+ from '../modules/authentication-middleware.js';
+import encryptLib from '../modules/encryption.js';
+import pool from '../modules/pool.js';
+import userStrategy from '../strategies/user.strategy.js';
 
 const router = express.Router();
 

@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-require('dotenv').config();
+import { config } from 'dotenv';
 const PORT = process.env.PORT || 5001;
 
 // Middleware Includes
-const sessionMiddleware = require('./modules/session-middleware');
-const passport = require('./strategies/user.strategy');
+import sessionMiddleware from './modules/session-middleware.js'
+import passport from './strategies/user.strategy.js';
 
 // Route Includes
-const userRouter = require('./routes/user.router');
+import userRouter from './routes/user.router.js';
 
 // Express Middleware
 app.use(express.json());
