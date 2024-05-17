@@ -1,4 +1,4 @@
-const pg = require('pg');
+import pg from 'pg';
 let pool;
 
 // When our app is deployed to the internet 
