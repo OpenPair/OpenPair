@@ -8,8 +8,8 @@ function ViteStartup(){
 
     const handleClick = (count) => {
         setCount(count + 1)
-        api.post('api/session/', {count: count + 1})
-        .then(response => console.log('Alright!')).catch(err => console.log(err))
+        api.get('/api/test_get/')
+        .then(response => console.log('Alright!', response.data)).catch(err => console.log(err))
 
     }
     return (
