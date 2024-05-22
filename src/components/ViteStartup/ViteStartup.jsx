@@ -7,38 +7,31 @@ import Cookies from 'js-cookie'
 
 function ViteStartup() {
     const [count, setCount] = useState(0)
-    const [token, setToken] = useState('')
 
     const handleClick = async (count) => {
         setCount(count + 1)
-        await getToken()
-        api.post('/api/session/', {'Test': 'This is NOAA'})
+        // await getToken()
+        api.post('/api/session/', {'Test': 'There\'s no way this is actually working'})
             .then(response => console.log('Alright!', response.data)).catch(err => console.log(err))
     }
 
-    const getToken = async () => {
-        try {
-            const response = await api.get('/api/get-csrf-token');
-            console.log('CSRF Token received:', response.data.csrfToken);
-            console.log('Cookies.get', Cookies.get('csrftoken'));
-        } catch (error) {
-            console.error('Failed to get CSRF token', error);
-        }
-    };
+    // const getToken = async () => {
+    //     try {
+    //         const response = await api.get('/api/get-csrf-token');
+    //         console.log('CSRF Token received:', response.data.csrfToken);
+    //         console.log('Cookies.get', Cookies.get('csrftoken'));
+    //     } catch (error) {
+    //         console.error('Failed to get CSRF token', error);
+    //     }
+    // };
 
-    const testGet = () => {
-        axios.get('/api/test-get/', { withCredentials: true, baseURL: 'http://127.0.0.1:8000' })
-            .then(response => {
-                console.log('This is the test get. Response:', response.data);
-            })
-            .catch(err => console.log(err))
-    }
-
-    useEffect(() => {
-        if (!token) {
-            getToken()
-        }
-    }, [])
+    // const testGet = () => {
+    //     axios.get('/api/test-get/', { withCredentials: true, baseURL: 'http://127.0.0.1:8000' })
+    //         .then(response => {
+    //             console.log('This is the test get. Response:', response.data);
+    //         })
+    //         .catch(err => console.log(err))
+    // }
 
     return (
         <>
