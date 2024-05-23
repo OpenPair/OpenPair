@@ -160,4 +160,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
 ]
 
+FILE_UPLOAD_TEMP_DIR = None
+
 # CSRF_COOKIE_HTTPONLY = False
