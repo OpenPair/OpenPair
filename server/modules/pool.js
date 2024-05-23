@@ -21,7 +21,7 @@ else {
     pool = new pg.Pool({
         host: 'localhost',
         port: 5432,
-        database: '8bitcoffee',   // TODO:	💥 Change this to the name of your database!
+        database: 'open_pair',   // TODO:	💥 Change this to the name of your database!
     });
 }
 
