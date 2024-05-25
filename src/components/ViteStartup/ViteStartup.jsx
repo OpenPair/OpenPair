@@ -47,6 +47,7 @@ function ViteStartup() {
                 <button onClick={() => handleClick(count)}>
                     count is {count}
                 </button>
+                <button onClick={() => getCount()}>Get Count Now.</button>
                 <p>
                     Edit <code>src/App.jsx</code> and save to test HMR
                 </p>

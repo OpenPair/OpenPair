@@ -8,15 +8,15 @@ const api = axios.create({
     withCredentials: true,
 })
 
-// api.interceptors.request.use(config => {
-//     const token = Cookies.get('csrftoken');
-//     console.log(token);
-//     if (token) {
-//         config.headers['X-CSRFToken'] = token;
-//     }
-//     return config;
-// },
-// err => Promise.reject(err));
+api.interceptors.request.use(config => {
+    const token = Cookies.get('csrftoken');
+    console.log(token);
+    if (token) {
+        config.headers['X-CSRFToken'] = token;
+    }
+    return config;
+},
+err => Promise.reject(err));
 
 
 export default api

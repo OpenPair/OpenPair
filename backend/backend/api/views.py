@@ -26,17 +26,21 @@ def get_csrf_token(request):
     response.set_cookie('csrftoken', token)
     return response
 
-# ? Test GET the current count
-@api_view(['GET', 'POST',])
+# ? Test GET/POST the current count
+@api_view(['GET', 'POST'])
 def count(request):
-    if request.session:
-        print('If there\'s a session:', request.session)
+    # ! GET
     if request.method == 'GET':
-        print('GETTING SESSION:', request.session.keys())
+        print('GETTING SESSION:', request.session)
         return Response(request.session['MyCount'], status=status.HTTP_200_OK)
+    # ! POST
     if request.method == 'POST':
         print('REQUEST.DATA:', request.data)
         print('POSTING SESSION:', request.session)
         request.session['MyCount'] = request.data
         print(request.session['MyCount'], request.session.keys())
         return Response(status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def query_openai(request):
+    return Response('You are querying the OpenAi genie', status=status.HTTP_200_OK)
