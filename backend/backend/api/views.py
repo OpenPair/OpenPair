@@ -26,15 +26,17 @@ def get_csrf_token(request):
     response.set_cookie('csrftoken', token)
     return response
 
-# GET the current count
-@api_view(['POST', 'GET'])
+# ? Test GET the current count
+@api_view(['GET', 'POST',])
 def count(request):
     if request.session:
-        print(request.session)
+        print('If there\'s a session:', request.session)
     if request.method == 'GET':
-        return Response('You are GETting from count/')
+        print('GETTING SESSION:', request.session.keys())
+        return Response(request.session['MyCount'], status=status.HTTP_200_OK)
     if request.method == 'POST':
-        print(request.data)
+        print('REQUEST.DATA:', request.data)
+        print('POSTING SESSION:', request.session)
         request.session['MyCount'] = request.data
-        print(request.session['MyCount'])
+        print(request.session['MyCount'], request.session.keys())
         return Response(status=status.HTTP_201_CREATED)

@@ -15,23 +15,22 @@ function ViteStartup() {
             .then(response => console.log('Alright!', response.data)).catch(err => console.log(err))
     }
 
-    // const getToken = async () => {
-    //     try {
-    //         const response = await api.get('/api/get-csrf-token');
-    //         console.log('CSRF Token received:', response.data.csrfToken);
-    //         console.log('Cookies.get', Cookies.get('csrftoken'));
-    //     } catch (error) {
-    //         console.error('Failed to get CSRF token', error);
-    //     }
-    // };
+    const getCount = () => {
+        api.get('/api/count/')
+        .then(response => {
+            console.log(response.data);
+        }).catch(err => {
+            console.log(err);
+        })
+    }
 
-    // const testGet = () => {
-    //     axios.get('/api/test-get/', { withCredentials: true, baseURL: 'http://127.0.0.1:8000' })
-    //         .then(response => {
-    //             console.log('This is the test get. Response:', response.data);
-    //         })
-    //         .catch(err => console.log(err))
-    // }
+    useEffect(() => {
+        api.post('/api/count/', {count: 'When will this work??'})
+        .then((response) => {
+            console.log('Set intial count for this session.', response);
+            getCount()
+        })
+    }, [])
 
     return (
         <>
@@ -52,8 +51,6 @@ function ViteStartup() {
                     Edit <code>src/App.jsx</code> and save to test HMR
                 </p>
             </div>
-            <div><button onClick={() => getToken()}>This will get the token.</button></div>
-            <div><button onClick={() => testGet()}>This is a test GET</button></div>
             <p className="read-the-docs">
                 Click on the Vite and React logos to learn more
             </p>
