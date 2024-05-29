@@ -156,7 +156,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SAMESITE = 'None'
+
+SESSION_COOKIE_SECURE = True
 
 SESSION_COOKIE_DOMAIN = '127.0.0.1'
 
@@ -171,6 +173,10 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 FILE_UPLOAD_TEMP_DIR = None
+
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+
+CSRF_COOKIE_HTTPONLY = False
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -202,7 +208,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         # Ensure your logger is included in the configuration
