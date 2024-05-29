@@ -57,20 +57,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'api',
     'rest_framework',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'api.middleware.middleware_logger.LoggingMiddleware',  #1
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'api.middleware.middleware_logger.LoggingMiddleware',  #2
     'corsheaders.middleware.CorsMiddleware',
+    'api.middleware.middleware_logger.LoggingMiddleware',  #3
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'api.middleware.middleware_logger.LoggingMiddleware',  #4
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.middleware_logger.LoggingMiddleware',  #5
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -150,11 +155,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS_ALLOW_ALL_ORIGINS = True  # ! Might have to change these before deployment
+
+SESSION_COOKIE_SAMESITE = None
+
+SESSION_COOKIE_DOMAIN = '127.0.0.1'
+
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
-CORS_ALLOW_CREDENTIALS = True  # ! "
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
@@ -162,4 +172,44 @@ CSRF_TRUSTED_ORIGINS = [
 
 FILE_UPLOAD_TEMP_DIR = None
 
-# CSRF_COOKIE_HTTPONLY = False
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.BasicAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#     ]
+# }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        # Ensure your logger is included in the configuration
+        'middleware_logger': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

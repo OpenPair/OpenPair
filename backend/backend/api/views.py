@@ -31,11 +31,11 @@ def get_csrf_token(request):
 def count(request):
     # ! GET
     if request.method == 'GET':
-        print('GETTING SESSION:', request.session)
+        print('GETTING SESSION:', f'\n\tSession key: {request.session.session_key}', '\n\tUser:', request.user)
         return Response(request.session['MyCount'], status=status.HTTP_200_OK)
     # ! POST
     if request.method == 'POST':
-        print('REQUEST.DATA:', request.data)
+        print('REQUEST.DATA:', request.data, 'user:', request.user)
         print('POSTING SESSION:', request.session)
         request.session['MyCount'] = request.data
         print(request.session['MyCount'], request.session.keys())

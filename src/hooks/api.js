@@ -10,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(config => {
     const token = Cookies.get('csrftoken');
-    console.log(token);
+    // console.log(token);
     if (token) {
         config.headers['X-CSRFToken'] = token;
     }
