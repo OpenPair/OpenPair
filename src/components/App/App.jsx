@@ -72,6 +72,10 @@ function App() {
               <RegisterPage />
             }
           />
+	  <Route
+	    exact path="/sidebar"
+	    element={<Sidebar />}
+	  />
 
           <Route
             exact path="/home"
@@ -82,7 +86,7 @@ function App() {
               redirect("/user")
               :
               // Otherwise, show the Landing page
-              <Sidebar />
+              <ViteStartup />
             }
           />
 
