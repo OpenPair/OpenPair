@@ -63,19 +63,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'api.middleware.middleware_logger.LoggingMiddleware',  #1
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'api.middleware.middleware_logger.LoggingMiddleware',  #2
     'corsheaders.middleware.CorsMiddleware',
-    'api.middleware.middleware_logger.LoggingMiddleware',  #3
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'api.middleware.middleware_logger.LoggingMiddleware',  #4
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.middleware.middleware_logger.LoggingMiddleware',  #5
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -105,8 +100,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'open_pair',  # ! name of the database in Postgres
-        'USER': 'popkga01',  # ! change this your own username that's associate with your localhost
+        'NAME': os.getenv('DATABASE_NAME'),  # ! set in .env file
+        'USER': os.getenv('DATABASE_USER'),  # ! "
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
@@ -172,50 +167,43 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
 ]
 
-FILE_UPLOAD_TEMP_DIR = None
-
 CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
 
 CSRF_COOKIE_HTTPONLY = False
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.BasicAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#     ]
-# }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        # Ensure your logger is included in the configuration
-        'middleware_logger': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
-}
+# I have you, should I need you. ♥️
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '{levelname} {asctime} {module} {message}',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '{levelname} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#             'propagate': True,
+#         },
+#         # Ensure your logger is included in the configuration
+#         'middleware_logger': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }

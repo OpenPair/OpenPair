@@ -1,3 +1,4 @@
+import asyncio
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
@@ -42,5 +43,6 @@ def count(request):
         return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-def query_openai(request):
+async def query_openai(request):
+    # response = await 
     return Response('You are querying the OpenAi genie', status=status.HTTP_200_OK)
