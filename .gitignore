@@ -132,5 +132,8 @@ dist
 # Python
 bin/
 lib/
+env/
 pyvenv.cfg
+__pycache__/
 
+.vscode/
