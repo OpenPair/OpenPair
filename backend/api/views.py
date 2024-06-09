@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.middleware.csrf import get_token
+from . import ai_client
 
 # Create your views here.
 # ? Test POST
@@ -43,6 +44,19 @@ def count(request):
         return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-async def query_openai(request):
-    # response = await 
-    return Response('You are querying the OpenAi genie', status=status.HTTP_200_OK)
+def query_openai(request):
+    if ('thread_id' not in request.session):
+        created_assistant = ai_client.create_asst_thrd()
+        request.session['thread_id'] = created_assistant["thread"].id
+        request.session['assistant_id'] = created_assistant['assistant'].id
+        return Response(created_assistant['thread'].id, status=status.HTTP_200_OK)
+    else:
+        print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
+        thread_id = request.session['thread_id']
+        assistant_id = request.session['assistant_id']
+        messages = ai_client.run(
+            thread_id=thread_id, 
+            assistant_id=assistant_id,
+            user_message=request.data['message']
+            )
+        return Response(messages, status=status.HTTP_200_OK)
