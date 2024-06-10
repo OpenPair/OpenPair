@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react'
 import { Button } from 'reactstrap'
 import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap'
+import { BsArrowRight } from "react-icons/bs";
 
 import '../styles/main.scss'
 
@@ -18,7 +19,9 @@ export default function Sidebar(){
       
       <div className="sidebar-header">
         <h2>Open Pair</h2>
-	<Button>Hey</Button>
+	<Button>
+	<BsArrowRight />
+	</Button>
       </div>
       <p>This is a custom sidebar component.</p>
       <button onClick={toggleExpand}>
