@@ -1,4 +1,4 @@
-const pg = require('pg');
+import pg from 'pg';
 let pool;
 
 // When our app is deployed to the internet 
@@ -21,7 +21,7 @@ else {
     pool = new pg.Pool({
         host: 'localhost',
         port: 5432,
-        database: 'open_pair',   // TODO:	💥 Change this to the name of your database!
+        database: process.env.LOCAL_DATABASE_URL,
     });
 }
 

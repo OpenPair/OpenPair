@@ -3,9 +3,9 @@
 1. Clone repo locally
 2. Create PostgreSQL database locally
 3. `npm install`
-4. Set database name in `/server/modules/pool.js` to your database's name
-5. Create .env file in root project directory
-6. In .env write `SERVER_SESSION_SECRET = [Random hash of your choice]`
+4. Create .env file in root project directory
+5. In .env write `SERVER_SESSION_SECRET = [Random hash of your choice]`
+6. In .env write `LOCAL_DATABASE_URL = [Name your local database]`
 
 Good to go. Happy coding.
 
