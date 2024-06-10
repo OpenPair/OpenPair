@@ -24,21 +24,8 @@
 
   .sidebar-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: row-reverse;
     padding-bottom: 10px;
-  }
-
-  button {
-    background: white;
-    color: #343a40;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-
-    &:hover {
-      background: #ddd;
-    }
   }
 }
 
