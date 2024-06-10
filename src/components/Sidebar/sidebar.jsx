@@ -7,31 +7,28 @@ import '../styles/main.scss'
 
 export default function Sidebar(){
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggleExpand = () => setIsExpanded(!isExpanded);
 
-  return(
+  return (
+    <div style={{ display: 'flex' }}>
+      {/* Sidebar */}
+      <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
+        <h2>Sidebar</h2>
+        <p>This is a custom sidebar component.</p>
+        <button onClick={toggleExpand}>
+          {isExpanded ? 'Collapse' : 'Expand'}
+        </button>
+      </div>
 
-    <div>
-      <Button
-	color="primary"
-	onClick={toggle}
-      >
-	Open
-      </Button>
-      <Offcanvas isOpen={isOpen}
-      toggle={toggle}>
-	<OffcanvasHeader >
-	  Offcanvas
-	</OffcanvasHeader>
-	<OffcanvasBody>
-	  <strong>
-            This is the Offcanvas body.
-	  </strong>
-	</OffcanvasBody>
-      </Offcanvas>
+      {/* Main Content */}
+      <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
+        <h1>Main Content Area</h1>
+        <p>This is the main content area of your application.</p>
+      </div>
     </div>
+
     
   )
 }

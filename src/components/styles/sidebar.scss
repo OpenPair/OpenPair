@@ -1,0 +1,41 @@
+// src/styles/_sidebar.scss
+
+.sidebar {
+  width: 100px;
+  transition: width 0.3s ease;
+  background: #343a40;
+  color: white;
+  padding: 10px;
+  position: relative;
+  height: 100vh;
+
+  &.expanded {
+    width: 300px;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: inherit;
+  }
+
+  p {
+    color: inherit;
+  }
+
+  button {
+    background: white;
+    color: #343a40;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background: #ddd;
+    }
+  }
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
