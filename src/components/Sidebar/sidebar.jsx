@@ -14,19 +14,23 @@ export default function Sidebar(){
   return (
     <div style={{ display: 'flex' }}>
       {/* Sidebar */}
-      <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
-        <h2>Sidebar</h2>
-        <p>This is a custom sidebar component.</p>
-        <button onClick={toggleExpand}>
-          {isExpanded ? 'Collapse' : 'Expand'}
-        </button>
+    <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
+      
+      <div className="sidebar-header">
+        <h2>Open Pair</h2>
+	<Button>Hey</Button>
       </div>
-
-      {/* Main Content */}
-      <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
-        <h1>Main Content Area</h1>
-        <p>This is the main content area of your application.</p>
-      </div>
+      <p>This is a custom sidebar component.</p>
+      <button onClick={toggleExpand}>
+        {isExpanded ? 'Collapse' : 'Expand'}
+      </button>
+    </div>
+    
+    {/* Main Content */}
+    <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
+      <h1>Main Content Area</h1>
+      <p>This is the main content area of your application.</p>
+    </div>
     </div>
 
     
