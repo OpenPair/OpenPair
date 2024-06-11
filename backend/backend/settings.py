@@ -14,8 +14,17 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+import boto3
 
 load_dotenv()
+
+# Connecting to S3 bucket for doc repo. Saved as variable 's3_bucket'
+
+s3_api = os.getenv("S3_API_KEY")
+s3_secret = os.getenv("S3_SECRET_KEY")
+session = boto3.Session( aws_access_key_id = s3_api, aws_secret_access_key = s3_secret)
+s3 = session.resource('s3')
+s3_bucket = s3.Bucket('openpair')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lytlv#m0w^zbv1#3*gyw1y#*dg91*sg$^@+ptw=3iil_39(s*h'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -104,7 +113,7 @@ DATABASES = {
         'USER': os.getenv('DATABASE_USER'),  # ! "
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
