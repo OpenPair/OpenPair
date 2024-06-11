@@ -5,6 +5,10 @@ import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap'
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import '../styles/main.scss'
 
+/**
+   Basic custom Sidebar Component
+*/
+
 export default function Sidebar(){
 
   const [isExpanded, setIsExpanded] = useState(false);
