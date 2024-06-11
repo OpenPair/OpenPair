@@ -20,11 +20,9 @@ export default function Sidebar(){
 	{isExpanded ? (
 	  <BsArrowLeft
 	    onClick={toggleExpand}/>
-	  
 	) : (
 	  <BsArrowRight
 	    onClick={toggleExpand} />
-	  
 	)}
       </div>
       <p>This is a custom sidebar component.</p>
@@ -33,7 +31,6 @@ export default function Sidebar(){
     {/* Main Content */}
     <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
       <h1>Main Content Area</h1>
-      <p>This is the main content area of your application.</p>
     </div>
     </div>
 
