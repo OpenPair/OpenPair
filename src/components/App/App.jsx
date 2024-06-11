@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import './App.css'
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
-import ViteStartup from '../ViteStartup/ViteStartup.jsx';
 import LoginPage from '../LoginPage/LoginPage.jsx';
 import RegisterPage from '../RegisterPage/RegisterPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
@@ -79,9 +78,8 @@ function App() {
               // If the user is already logged in, 
               // redirect them to the /user page
               redirect("/user")
-              :
-              // Otherwise, show the Landing page
-              <ViteStartup />
+            :
+	     <h1>Hey there square</h1>
             }
           />
 
