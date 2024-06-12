@@ -1,0 +1,35 @@
+// src/styles/_sidebar.scss
+
+.sidebar {
+  width: 150px;
+  transition: width 0.3s ease;
+  background: #343a40;
+  color: white;
+  padding: 10px;
+  position: relative;
+  height: 100vh;
+
+  &.expanded {
+    width: 300px;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: inherit;
+  }
+
+  p {
+    color: inherit;
+  }
+
+  .sidebar-header {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-bottom: 10px;
+  }
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}

@@ -14,6 +14,7 @@ import ViteStartup from '../ViteStartup/ViteStartup.jsx';
 import LoginPage from '../LoginPage/LoginPage.jsx';
 import RegisterPage from '../RegisterPage/RegisterPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
+import Sidebar from '../Sidebar/sidebar.jsx'
 
 function App() {
   const dispatch = useDispatch();
@@ -71,6 +72,10 @@ function App() {
               <RegisterPage />
             }
           />
+	  <Route
+	    exact path="/sidebar"
+	    element={<Sidebar />}
+	  />
 
           <Route
             exact path="/home"
