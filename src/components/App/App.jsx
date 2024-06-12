@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   Navigate,
+  Link
 } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +14,7 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 import LoginPage from '../LoginPage/LoginPage.jsx';
 import RegisterPage from '../RegisterPage/RegisterPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
-import Home from '../home/Home.jsx';
+import AboutPage from '../AboutPage/About.jsx'
 
 function App() {
   const dispatch = useDispatch();
@@ -24,12 +25,28 @@ function App() {
     dispatch({ type: 'FETCH_USER' });
   }, [dispatch]);
 
+
+
   return (
     <Router>
+    <nav>
+      <Link to="/">Home</Link>
+    <br/>
+      <Link to="/about">About</Link>
+    <br/>
+      <Link to="/contact">Contact</Link>
+    <br/>
+    </nav>
+    
       <div>
         {/* <Nav /> */}
         <Routes>
           {/* Visiting localhost:5173 will redirect to localhost:5173/home */}
+	  <Route
+	    path="/about"
+	    element={<AboutPage />}
+	  />
+
           <Route
             path="/"
             element={<Navigate replace to="/home"/>}
@@ -80,7 +97,7 @@ function App() {
               // redirect them to the /user page
               redirect("/user")
             :
-	     <Home />
+	     <h1>Heyyyyy there square</h1>
             }
           />
 
@@ -90,8 +107,7 @@ function App() {
             element={<h1>404 - Not Found</h1>}
           />
         </Routes>
-
-        {/* <Footer /> */}
+    
       </div>
     </Router>
   )
