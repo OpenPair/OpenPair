@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './App.css'
 import AboutPage from '../AboutPage/About.jsx'
 import ContactPage from '../ContactPage/Contact.jsx'
+import Settings from '../Settings/Settings.jsx'
 /* import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 * import LoginPage from '../LoginPage/LoginPage.jsx';
 * import RegisterPage from '../RegisterPage/RegisterPage.jsx';
@@ -36,6 +37,8 @@ export default function App() {
     <br/>
       <Link to="/contact">Contact</Link>
     <br/>
+      <Link to="/settings">Settings</Link>
+    <br/>
     </nav>
     
       <div>
@@ -43,6 +46,11 @@ export default function App() {
 	  <Route
 	    path="/about"
 	    element={<AboutPage />}
+	  />
+
+	  <Route
+	    path="/settings"
+	    element={<Settings />}
 	  />
 
           <Route
