@@ -13,6 +13,7 @@ import './App.css'
 import AboutPage from '../AboutPage/About.jsx'
 import ContactPage from '../ContactPage/Contact.jsx'
 import Settings from '../Settings/Settings.jsx'
+import Help from '../Help/Help.jsx'
 /* import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 * import LoginPage from '../LoginPage/LoginPage.jsx';
 * import RegisterPage from '../RegisterPage/RegisterPage.jsx';
@@ -31,6 +32,7 @@ export default function App() {
   return (
     <Router>
     <nav>
+      <p>New Chat Button</p>
       <Link to="/">Home</Link>
     <br/>
       <Link to="/about">About</Link>
@@ -39,6 +41,8 @@ export default function App() {
     <br/>
       <Link to="/settings">Settings</Link>
     <br/>
+      <Link to="/help">Help</Link>
+    <br/>
     </nav>
     
       <div>
@@ -46,6 +50,10 @@ export default function App() {
 	  <Route
 	    path="/about"
 	    element={<AboutPage />}
+	  />
+	  <Route
+	    path="/help"
+	    element={<Help />}
 	  />
 
 	  <Route
