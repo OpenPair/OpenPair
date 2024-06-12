@@ -43,13 +43,31 @@ def count(request):
         print(request.session['MyCount'], request.session.keys())
         return Response(status=status.HTTP_201_CREATED)
 
+"""
+Route: 'api/query-client/'
+Expects: An object like: 
+{
+    "message": "Here is what the user was asking the AI assistant."
+}
+Response: 200, with list of entire conversation.
+
+! NOTE: sessions expire when browser closes.
+"""
 @api_view(['GET'])
 def query_openai(request):
-    if ('thread_id' not in request.session):
-        created_assistant = ai_client.create_asst_thrd()
-        request.session['thread_id'] = created_assistant["thread"].id
+    if ('thread_id' not in request.session):  # If the thread_id does not exist in a current session:
+        created_assistant = ai_client.create_asst_thrd()  # creates a new assistant and thread
+        request.session['thread_id'] = created_assistant["thread"].id  # Creates new session key for thread_id and assistant_id
         request.session['assistant_id'] = created_assistant['assistant'].id
-        return Response(created_assistant['thread'].id, status=status.HTTP_200_OK)
+        thread_id = request.session['thread_id']
+        assistant_id = request.session['assistant_id']
+        messages = ai_client.run(  # Creates a run with the first message.
+            thread_id=thread_id, 
+            assistant_id=assistant_id,
+            user_message=request.data['message']
+        )
+        ex_messages = ai_client.extract_messages(messages)
+        return Response(ex_messages, status=status.HTTP_200_OK)
     else:
         print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
         thread_id = request.session['thread_id']
@@ -59,4 +77,5 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
             )
-        return Response(messages, status=status.HTTP_200_OK)
+        ex_messages = ai_client.extract_messages(messages)
+        return Response(ex_messages, status=status.HTTP_200_OK)

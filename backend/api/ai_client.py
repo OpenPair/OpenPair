@@ -6,6 +6,8 @@ import pprint
 
 load_dotenv()
 
+
+# ! Sets up the AI Client with the correct keys.
 api_key = getenv('OPENAI_API_KEY')
 organization = getenv('ORGANIZATION')
 project = getenv('PROJECT')
@@ -16,6 +18,11 @@ client = OpenAI(
   project = project,
 )
 
+"""
+! Creates the AI assistant with its applicable settings, 
+! as well as the thread. Returns the created assistant and thread, 
+! both with id properties.
+"""
 def create_asst_thrd():
   assistant = client.beta.assistants.create(
       name = 'Tech Documentation Simplifier',
@@ -28,19 +35,27 @@ def create_asst_thrd():
 
   return {"assistant": assistant, "thread": thread}
 
+"""
+! Takes the current thread_id, assistant_id, and whatever message user has typed,
+! appends it to the conversation, and returns the whole conversation.
+"""
 def run(thread_id, assistant_id, user_message):
+  # Creates the message that gets appended to the conversation.
   message = client.beta.threads.messages.create(
     thread_id=thread_id,
     role='user',
     content=user_message
   )
 
+  # Runs the assistant with the new message
   run = client.beta.threads.runs.create_and_poll(
     thread_id=thread_id,
     assistant_id=assistant_id,
     instructions='The user is a beginning developer.'
   )
 
+  # Once the run is complete, a list of messages from the current thread is created
+  # and returned.
   if run.status == 'completed': 
     messages = client.beta.threads.messages.list(
     thread_id=thread_id
@@ -51,6 +66,26 @@ def run(thread_id, assistant_id, user_message):
 
   return messages
 
+def extract_messages(array):
+  # *Looping method
+  # list_of_messages = []
+  # for message in array:
+  #   message_keys = dict()
+
+  #   for m_key in message:
+  #     message_keys[m_key[0]] = m_key[1]
+
+  #   list_of_messages.append(message_keys)
+  # print(list_of_messages)
+
+  # *Dictionary comprehension method:
+  list_of_messages = []
+  for message in array:
+    message_keys = {item[0]: item[1] for item in message}
+    # print(message_keys)
+    list_of_messages.append(message_keys)
+  # print(list_of_messages)
+  return list_of_messages
 
 
 # ! TESTING
