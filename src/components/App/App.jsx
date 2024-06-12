@@ -15,6 +15,7 @@ import LoginPage from '../LoginPage/LoginPage.jsx';
 import RegisterPage from '../RegisterPage/RegisterPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
 import AboutPage from '../AboutPage/About.jsx'
+import ContactPage from '../ContactPage/Contact.jsx'
 
 function App() {
   const dispatch = useDispatch();
@@ -99,6 +100,10 @@ function App() {
             :
 	     <h1>Heyyyyy there square</h1>
             }
+          />
+          <Route
+            path="/contact"
+            element={<ContactPage />}
           />
 
           {/* If none of the other routes matched, we will show a 404. */}
