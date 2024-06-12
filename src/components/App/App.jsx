@@ -13,6 +13,7 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 import LoginPage from '../LoginPage/LoginPage.jsx';
 import RegisterPage from '../RegisterPage/RegisterPage.jsx';
 import UserPage from '../UserPage/UserPage.jsx';
+import Home from '../home/Home.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -79,7 +80,7 @@ function App() {
               // redirect them to the /user page
               redirect("/user")
             :
-	     <h1>Hey there square</h1>
+	     <Home />
             }
           />
 
@@ -89,6 +90,7 @@ function App() {
             element={<h1>404 - Not Found</h1>}
           />
         </Routes>
+
         {/* <Footer /> */}
       </div>
     </Router>
