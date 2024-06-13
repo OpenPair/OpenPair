@@ -22,11 +22,14 @@ client = OpenAI(
 ! Creates the AI assistant with its applicable settings, 
 ! as well as the thread. Returns the created assistant and thread, 
 ! both with id properties.
+! Args: instructions -- str, instructions for the assistant. Defaults to coding tutor.
 """
-def create_asst_thrd():
+def create_asst_thrd(
+    instructions = 'You are tutor that simplifies coding documentation for beginning software developers'
+    ):
   assistant = client.beta.assistants.create(
       name = 'Tech Documentation Simplifier',
-      instructions= 'You are tutor that simplifies coding documentation for beginning software developers',
+      instructions= instructions,
       model='gpt-3.5-turbo',
       tools=[{'type': 'file_search'}],
   )
@@ -51,7 +54,6 @@ def run(thread_id, assistant_id, user_message):
   run = client.beta.threads.runs.create_and_poll(
     thread_id=thread_id,
     assistant_id=assistant_id,
-    instructions='The user is a beginning developer.'
   )
 
   # Once the run is complete, a list of messages from the current thread is created
@@ -60,12 +62,56 @@ def run(thread_id, assistant_id, user_message):
     messages = client.beta.threads.messages.list(
     thread_id=thread_id
     )
-    pprint.pformat(messages)
+    # pprint.pformat(messages)
   else:
     print(run.status)
 
   return messages
 
+def rerun(thread_id, assistant_id, message_id, regen_message):
+  # delete the message from the thread, and have it return a new message that is restated.
+  #// 1 Delete message
+  #// 2 Create a new message asking for a rephrased response
+  #// 3 Create a run with new instructions of the assistant
+  #// 4 Delete the user's message that we crafted
+  #// 5 Return list of messages
+
+  deleted = client.beta.threads.messages.delete(
+      thread_id=thread_id,
+      message_id=message_id,
+    )
+
+  prompt = f"Please rephrase this response using simpler language and analogies: {regen_message}"
+  message = client.beta.threads.messages.create(
+    thread_id=thread_id,
+    role='user',
+    content=prompt,
+  )
+
+  run = client.beta.threads.runs.create_and_poll(
+    thread_id=thread_id,
+    assistant_id=assistant_id,
+    instructions='You are to simplify coding and development topics so it is understandable to beginners.'
+  )
+
+  if run.status == 'completed': 
+    client.beta.threads.messages.delete(
+      message_id=message.id,
+      thread_id=thread_id,
+    )
+
+    messages = client.beta.threads.messages.list(
+    thread_id=thread_id
+    )
+
+    return messages
+  else:
+    print(run.status)
+
+
+"""
+! A function to comprehend the data from AI assistant better. 
+"""
 def extract_messages(array):
   # *Looping method
   # list_of_messages = []
@@ -89,20 +135,20 @@ def extract_messages(array):
 
 
 # ! TESTING
-assistant = create_asst_thrd()
-# print(assistant["thread"].id)
+# assistant = create_asst_thrd()
+# # print(assistant["thread"].id)
 
-run(
-  thread_id=assistant["thread"].id, 
-  assistant_id=assistant["assistant"].id, 
-  user_message='Say hello!',
-  )
+# run(
+#   thread_id=assistant["thread"].id, 
+#   assistant_id=assistant["assistant"].id, 
+#   user_message='Say hello!',
+#   )
 
-run(  
-  thread_id=assistant["thread"].id, 
-  assistant_id=assistant["assistant"].id, 
-  user_message='Did I already ask you to say hello?',
-  )
+# run(  
+#   thread_id=assistant["thread"].id, 
+#   assistant_id=assistant["assistant"].id, 
+#   user_message='Did I already ask you to say hello?',
+#   )
 
 
 # ! This is for Chat Completion API
