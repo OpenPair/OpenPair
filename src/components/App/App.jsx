@@ -35,19 +35,6 @@ export default function App() {
   return (
     <Router>
     <Sidebar />
-    <nav>
-      <p>New Chat Button</p>
-      <Link to="/">Home</Link>
-    <br/>
-      <Link to="/about">About</Link>
-    <br/>
-      <Link to="/contact">Contact</Link>
-    <br/>
-      <Link to="/settings">Settings</Link>
-    <br/>
-      <Link to="/help">Help</Link>
-    <br/>
-    </nav>
     
       <div>
         <Routes>
