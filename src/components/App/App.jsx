@@ -10,10 +10,13 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 import './App.css'
+import '../styles/main.scss'
 import AboutPage from '../AboutPage/About.jsx'
 import ContactPage from '../ContactPage/Contact.jsx'
 import Settings from '../Settings/Settings.jsx'
 import Help from '../Help/Help.jsx'
+import Sidebar from '../Sidebar/sidebar.jsx'
+
 /* import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 * import LoginPage from '../LoginPage/LoginPage.jsx';
 * import RegisterPage from '../RegisterPage/RegisterPage.jsx';
@@ -31,6 +34,7 @@ export default function App() {
 
   return (
     <Router>
+    <Sidebar />
     <nav>
       <p>New Chat Button</p>
       <Link to="/">Home</Link>
@@ -129,12 +133,9 @@ export default function App() {
               <RegisterPage />
             }
           />
-<<<<<<< HEAD
  */}
-=======
 	  <Route
 	    exact path="/sidebar"
 	    element={<Sidebar />}
 	  />
->>>>>>> origin/main
 
