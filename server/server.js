@@ -1,6 +1,8 @@
 import express from 'express';
+import path from 'path';
+import dotenv from 'dotenv';
+
 const app = express();
-import { config } from 'dotenv';
 const PORT = process.env.PORT || 5001;
 
 // Middleware Includes

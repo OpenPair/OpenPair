@@ -129,5 +129,12 @@ export default function App() {
               <RegisterPage />
             }
           />
+<<<<<<< HEAD
  */}
+=======
+	  <Route
+	    exact path="/sidebar"
+	    element={<Sidebar />}
+	  />
+>>>>>>> origin/main
 
