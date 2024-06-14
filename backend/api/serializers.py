@@ -14,22 +14,22 @@ class VocabSerializer(serializers.ModelSerializer):
         fields = ['id', 'word', 'definition']
 
 # ? Attempting to serialize the OpenAi response object
-# class TextSerializer(serializers.Serializer):
-#     value = serializers.CharField()
-#     annotations = serializers.ListField(child=serializers.CharField(), required=False)
+class TextSerializer(serializers.Serializer):
+    value = serializers.CharField()
+    annotations = serializers.ListField(child=serializers.CharField(), required=False)
 
-# class ContentSerializer(serializers.Serializer):
-#     type = serializers.CharField()
-#     text = TextSerializer()
+class ContentSerializer(serializers.Serializer):
+    type = serializers.CharField()
+    text = TextSerializer()
 
-# class MessageSerializer(serializers.Serializer):
-#     id = serializers.CharField()
-#     object = serializers.CharField()
-#     create_at = serializers.TimeField()
-#     assistant_id = serializers.CharField()
-#     thread_id = serializers.CharField()
-#     run_id = serializers.CharField()
-#     role = serializers.CharField()
-#     content = ContentSerializer(many=True)
-#     attachments = serializers.ListField(required=False)
-#     metadata = serializers.DictField(required=False)
+class MessageSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    object = serializers.CharField()
+    created_at = serializers.IntegerField()
+    assistant_id = serializers.CharField()
+    thread_id = serializers.CharField()
+    run_id = serializers.CharField()
+    role = serializers.CharField()
+    content = ContentSerializer(many=True)
+    attachments = serializers.ListField(required=False)
+    metadata = serializers.DictField(required=False)

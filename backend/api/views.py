@@ -1,14 +1,11 @@
-import asyncio
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.middleware.csrf import get_token
 from . import ai_client
 from .models import Vocab
 from .serializers import VocabSerializer
-# from api.serializers import MessageSerializer
+from api.serializers import MessageSerializer
 
 """
 Route: 'api/query-client/'
@@ -33,8 +30,8 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
         )
-        ex_messages = ai_client.extract_messages(messages)
-        return Response(ex_messages, status=status.HTTP_200_OK)
+        serialized_messages = MessageSerializer(messages, many=True)
+        return Response(serialized_messages.data, status=status.HTTP_200_OK)
     else:
         print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
         thread_id = request.session['thread_id']
@@ -44,8 +41,8 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
             )
-        ex_messages = ai_client.extract_messages(messages)
-        return Response(ex_messages, status=status.HTTP_200_OK)
+        serialized_messages = MessageSerializer(messages, many=True)
+        return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
 """
 Route: 'api/regen/'
@@ -68,11 +65,20 @@ def regenerate_response(request):
         message_id=request.data['message_id'],
         regen_message=request.data['message']
     )
-    ex_messages = ai_client.extract_messages(messages)
-    return Response(ex_messages, status=status.HTTP_200_OK)
+    serialized_messages = MessageSerializer(messages, many=True)
+    return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
 """
-Route: 'api/definition/:word'
+Route: 'api/definition/:word' expects a string that is the word being looked up. Case-insensitive
+Response: 200 {
+    "id": 5,
+    "word": "Class",
+    "definition": "In object-oriented programming, a blueprint for creating objects, providing initial values for state and implementations of behavior."
+}
+404 if the word isn't found with an object like this: 
+{
+    "detail": "No Vocab matches the given query."
+}
 """
 @api_view(["GET"])
 def definition(request, word):
