@@ -1,11 +1,13 @@
 import asyncio
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.middleware.csrf import get_token
 from . import ai_client
+from .models import Vocab
+from .serializers import VocabSerializer
 # from api.serializers import MessageSerializer
 
 """
@@ -68,6 +70,17 @@ def regenerate_response(request):
     )
     ex_messages = ai_client.extract_messages(messages)
     return Response(ex_messages, status=status.HTTP_200_OK)
+
+"""
+Route: 'api/definition/:word'
+"""
+@api_view(["GET"])
+def definition(request, word):
+    word = get_object_or_404(Vocab, word__iexact=word)
+    print(f"Word: {word}")
+    serialized_word = VocabSerializer(word)
+    print(f"Serialized: {serialized_word.data}")
+    return Response(serialized_word.data, status=status.HTTP_200_OK)
 
     
 # Create your views here.
