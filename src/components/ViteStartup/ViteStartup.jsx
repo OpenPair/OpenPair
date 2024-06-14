@@ -2,34 +2,71 @@ import { useState, useEffect } from 'react'
 import reactLogo from '../../assets/react.svg'
 import viteLogo from '/vite.svg'
 import api from '../../hooks/api'
-import axios from 'axios'
-import Cookies from 'js-cookie'
+
+const styles = {
+    form: {
+        margin: 'auto',
+        width: '500px',
+    },
+    assistant : {
+        color: 'green',
+    },
+}
 
 function ViteStartup() {
-    const [count, setCount] = useState(0)
+    const [query, setQuery] = useState('')
+    const [convo, setConvo] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
-    const handleClick = async (count) => {
-        setCount(count + 1)
-        // await getToken()
-        api.post('/api/session/', {'Test': 'There\'s no way this is actually working'})
-            .then(response => console.log('Alright!', response.data)).catch(err => console.log(err))
-    }
-
-    const getCount = () => {
-        api.get('/api/count/')
-        .then(response => {
-            console.log(response.data);
+    /**
+     * A function that calls the query-client endpoint.
+     * Sets 'isLoading' to true while we wait for the response.
+     * Clears the input field.
+     * @param {*} e event
+     */
+    const queryAI = (e) => {
+        e.preventDefault()
+        setIsLoading(true)
+        // console.log('In queryAI', query);
+        api.post('api/query-client/', {
+            message: query
+        }).then(response => {
+            // console.log(response.data);
+            setConvo(response.data)
+            setQuery('')
+            setIsLoading(false)
         }).catch(err => {
             console.log(err);
         })
     }
 
-    useEffect(() => {
-        api.post('/api/count/', {count: 'When will this work??'})
-        .then((response) => {
-            console.log('Set intial count for this session.', response);
-            getCount()
+    /**
+     * Runs with a useEffect. Gets the whole conversation with the AI without making a run.
+     */
+    const getConversation = () => {
+        api.get('api/get-conversation')
+        .then(response => {
+            // console.log(response.data);
+            setConvo(response.data)
+        }).catch(err => {
+            console.log(err);
         })
+    }
+
+
+    /**
+     * A function that determines if the submit button will be disabled or not,
+     * depending on if there is something in the input field or if we are waiting
+     * for a response from the AI.
+     * @returns 
+     */
+    const isDisabled = () => {
+        if (isLoading || query === '') return true
+        return false
+    }
+
+    useEffect(() => {
+        getConversation()
     }, [])
 
     return (
@@ -43,14 +80,28 @@ function ViteStartup() {
                 </a>
             </div>
             <h1>Vite + React</h1>
+            <div>
+                {convo.toReversed().map((message) => {
+                    if (message.role === 'assistant') {
+                        return (<p style={styles.assistant} key={message.id}>
+                            {message.content[0].text.value}
+                        </p>) 
+                    }
+                    return (<p key={message.id}>
+                        {message.content[0].text.value}
+                    </p>)
+                })}
+            </div>
             <div className="card">
-                <button onClick={() => handleClick(count)}>
-                    count is {count}
-                </button>
-                <button onClick={() => getCount()}>Get Count Now.</button>
-                <p>
-                    Edit <code>src/App.jsx</code> and save to test HMR
-                </p>
+                <form onSubmit={(e) => queryAI(e)} style={styles.form}>
+                    <input
+                        type="text"
+                        placeholder='What will you ask about?'
+                        onChange={(e) => setQuery(e.target.value)}
+                        value={query} />
+                    <button type="submit" disabled={isDisabled()}>Ask</button>
+                </form>
+
             </div>
             <p className="read-the-docs">
                 Click on the Vite and React logos to learn more

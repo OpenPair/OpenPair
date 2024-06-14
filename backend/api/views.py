@@ -17,9 +17,10 @@ Response: 200, with list of entire conversation.
 
 ! NOTE: sessions expire when browser closes.
 """
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def query_openai(request):
-    if ('thread_id' not in request.session):  # If the thread_id does not exist in a current session:
+    print(f"request.data: {request.data}")
+    if 'thread_id' not in request.session:  # If the thread_id does not exist in a current session:
         created_assistant = ai_client.create_asst_thrd()  # creates a new assistant and thread
         request.session['thread_id'] = created_assistant["thread"].id  # Creates new session key for thread_id and assistant_id
         request.session['assistant_id'] = created_assistant['assistant'].id
@@ -30,10 +31,10 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
         )
-        serialized_messages = MessageSerializer(messages, many=True)
+        serialized_messages = MessageSerializer(messages, many=True) # Serializers translate into a json object
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
     else:
-        print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
+        # print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
         thread_id = request.session['thread_id']
         assistant_id = request.session['assistant_id']
         messages = ai_client.run(
@@ -43,6 +44,14 @@ def query_openai(request):
             )
         serialized_messages = MessageSerializer(messages, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
+    
+@api_view(["GET"])
+def get_all_messages(request):
+    if 'thread_id' not in request.session:
+        return Response(status=status.HTTP_200_OK)
+    messages = ai_client.get_conversation(thread_id=request.session['thread_id'])
+    serialized_messages = MessageSerializer(messages, many=True)
+    return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
 """
 Route: 'api/regen/'
@@ -69,7 +78,7 @@ def regenerate_response(request):
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
 """
-Route: 'api/definition/:word' expects a string that is the word being looked up. Case-insensitive
+Route: 'api/definition/:word/' expects a string that is the word being looked up. Case-insensitive
 Response: 200 {
     "id": 5,
     "word": "Class",
@@ -82,7 +91,7 @@ Response: 200 {
 """
 @api_view(["GET"])
 def definition(request, word):
-    word = get_object_or_404(Vocab, word__iexact=word)
+    word = get_object_or_404(Vocab, word__iexact=word) # Queries the DB for word that matches the work in the URL
     print(f"Word: {word}")
     serialized_word = VocabSerializer(word)
     print(f"Serialized: {serialized_word.data}")

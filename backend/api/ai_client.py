@@ -108,30 +108,34 @@ def rerun(thread_id, assistant_id, message_id, regen_message):
   else:
     print(run.status)
 
+def get_conversation(thread_id):
+  messages = client.beta.threads.messages.list(
+    thread_id=thread_id
+  )
+  return messages
 
-"""
-! A function to comprehend the data from AI assistant better. 
-"""
-def extract_messages(array):
-  # *Looping method
-  # list_of_messages = []
-  # for message in array:
-  #   message_keys = dict()
 
-  #   for m_key in message:
-  #     message_keys[m_key[0]] = m_key[1]
+# ! A function to comprehend the data from AI assistant better. 
+# def extract_messages(array):
+#   # *Looping method
+#   # list_of_messages = []
+#   # for message in array:
+#   #   message_keys = dict()
 
-  #   list_of_messages.append(message_keys)
-  # print(list_of_messages)
+#   #   for m_key in message:
+#   #     message_keys[m_key[0]] = m_key[1]
 
-  # *Dictionary comprehension method:
-  list_of_messages = []
-  for message in array:
-    message_keys = {item[0]: item[1] for item in message}
-    # print(message_keys)
-    list_of_messages.append(message_keys)
-  # print(list_of_messages)
-  return list_of_messages
+#   #   list_of_messages.append(message_keys)
+#   # print(list_of_messages)
+
+#   # *Dictionary comprehension method:
+#   list_of_messages = []
+#   for message in array:
+#     message_keys = {item[0]: item[1] for item in message}
+#     # print(message_keys)
+#     list_of_messages.append(message_keys)
+#   # print(list_of_messages)
+#   return list_of_messages
 
 
 # ! TESTING
