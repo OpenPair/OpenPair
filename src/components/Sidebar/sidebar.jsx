@@ -30,7 +30,7 @@ export default function Sidebar(){
 	)}
       </div>
       <nav>
-	<p>New Chat Button</p>
+	<p>New Chat Btn</p>
 	<Link to="/">Home</Link>
 	<br/>
 	<Link to="/about">About</Link>
