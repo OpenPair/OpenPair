@@ -14,8 +14,6 @@ Expects: An object like:
     "message": "Here is what the user was asking the AI assistant."
 }
 Response: 200, with list of entire conversation.
-
-! NOTE: sessions expire when browser closes.
 """
 @api_view(['GET', 'POST'])
 def query_openai(request):
@@ -42,6 +40,8 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
             )
+        for message in messages:
+            message.vocab = extract_vocab(message.content[0].text.value)
         serialized_messages = MessageSerializer(messages, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
     
@@ -74,6 +74,8 @@ def regenerate_response(request):
         message_id=request.data['message_id'],
         regen_message=request.data['message']
     )
+    for message in messages:
+        message.vocab = extract_vocab(message.content[0].text.value)
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
@@ -97,7 +99,28 @@ def definition(request, word):
     print(f"Serialized: {serialized_word.data}")
     return Response(serialized_word.data, status=status.HTTP_200_OK)
 
-    
+
+# I need a function that will look through each of the AI's responses, and identify the words that match vocab words.
+# 1. Get all the vocab words
+# 2. For each word, check if responses contain any vocab word.
+# 3. Append the word and definition to a dictionary.
+# 4. Dictionary is attached to message object.
+# 5. Message object is serialized and sent over.
+
+def extract_vocab(res):
+    word_list = Vocab.objects.all()
+    # words_in_res = {}
+    # for word in word_list:
+    #     if not res.lower().find(f" {word.word.lower()}") == -1:
+    #         print(f"Word: {word.word}\nDefinition: {word.definition}")
+    #         words_in_res[word.word] = word.definition
+    # return words_in_res
+    words_in_res = []
+    for word in word_list:
+        if not res.lower().find(f" {word.word.lower()}") == -1:
+            words_in_res.append(word)
+    return words_in_res
+ 
 # Create your views here.
 # ? Test POST
 # @api_view(['POST'])

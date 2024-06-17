@@ -8,7 +8,7 @@ const styles = {
         margin: 'auto',
         width: '500px',
     },
-    assistant : {
+    assistant: {
         color: 'green',
     },
 }
@@ -45,12 +45,12 @@ function ViteStartup() {
      */
     const getConversation = () => {
         api.get('api/get-conversation')
-        .then(response => {
-            // console.log(response.data);
-            setConvo(response.data)
-        }).catch(err => {
-            console.log(err);
-        })
+            .then(response => {
+                // console.log(response.data);
+                setConvo(response.data)
+            }).catch(err => {
+                console.log(err);
+            })
     }
 
 
@@ -81,11 +81,11 @@ function ViteStartup() {
             </div>
             <h1>Vite + React</h1>
             <div>
-                {convo.toReversed().map((message) => {
+                {convo && convo.toReversed().map((message) => {
                     if (message.role === 'assistant') {
                         return (<p style={styles.assistant} key={message.id}>
                             {message.content[0].text.value}
-                        </p>) 
+                        </p>)
                     }
                     return (<p key={message.id}>
                         {message.content[0].text.value}
