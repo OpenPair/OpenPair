@@ -4,6 +4,7 @@ import { Button } from 'reactstrap'
 import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap'
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import '../styles/main.scss'
+import Chat from '../Chat/Chat.jsx'
 
 /**
    Basic custom Sidebar Component
@@ -34,7 +35,7 @@ export default function Sidebar(){
     
     {/* Main Content */}
     <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
-      <h1>Main Content Area</h1>
+      <Chat />
     </div>
     </div>
 
