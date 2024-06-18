@@ -13,10 +13,12 @@ export default function Chat(){
 	  Some more content here as well
 	</div>
     <div className="bottom-chat-actions">
-      <Input />
-      <Button>
+      <Input id="chat-input" />
+
+      <Button id="send-chat-btn">
 	<IoIosSend />
       </Button>
+
     </div>
     </div>
     </>
