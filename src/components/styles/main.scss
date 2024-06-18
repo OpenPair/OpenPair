@@ -6,8 +6,14 @@ $secondary-color: #2ecc71;
 $font-stack: 'Arial, sans-serif';
 // Mixins
 
-body{
-  padding: 0;
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+}
 
+.app-container{
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }

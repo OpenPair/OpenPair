@@ -7,11 +7,14 @@ export default function Chat(){
       <div className="chatBox-container">
 	<div className="chatBox-content">
 	  Some content here
+	  Some more content here as well
+	  <br/>
+	  Some more content here as well
 	</div>
     <div className="bottom-chat-actions">
-	  <Input />
-	  <Button />
-	</div>
+      <Input />
+      <Button />
+    </div>
     </div>
     </>
   )

@@ -1,12 +1,13 @@
 // src/styles/_sidebar.scss
 
 .sidebar {
+  display:flex;
+  justify-content: start;
   width: 150px;
   transition: width 0.3s ease;
   background: #343a40;
   color: white;
   padding: 10px;
-  position: relative;
   height: 100vh;
 
   &.expanded {

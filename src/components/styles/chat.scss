@@ -1,6 +1,6 @@
 .chatBox-container{
-  display: flex;
-  background-color: green;
+  display:flex;
+  flex: 1;
   flex-direction: column;
 
 }
@@ -10,6 +10,6 @@
 }
 
 .chatBox-content{
-  flex:1;
   padding: 10px;
+  margin-top: auto;
 }
