@@ -4,7 +4,6 @@ import { Button } from 'reactstrap'
 import { Link,Outlet } from 'react-router-dom';
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import '../styles/main.scss'
-import Chat from '../Chat/Chat.jsx'
 
 /**
    Basic custom Sidebar Component
@@ -46,7 +45,7 @@ export default function Sidebar(){
     </div>
     
     {/* Main Content */}
-    <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
+    <div>
     </div>
     <Outlet/>
     </div>

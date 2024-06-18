@@ -2,7 +2,12 @@
 
 @import './sidebar';
 @import './chat';
-
 $secondary-color: #2ecc71;
 $font-stack: 'Arial, sans-serif';
 // Mixins
+
+body{
+  padding: 0;
+  margin: 0;
+
+}

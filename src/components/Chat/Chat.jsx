@@ -4,10 +4,15 @@ export default function Chat(){
 
   return(
     <>
-      <div className="chatBox">
-	<Input />
-	<Button />
-      </div>
+      <div className="chatBox-container">
+	<div className="chatBox-content">
+	  Some content here
+	</div>
+    <div className="bottom-chat-actions">
+	  <Input />
+	  <Button />
+	</div>
+    </div>
     </>
   )
 }

@@ -1,3 +1,4 @@
+import Chat from '../Chat/Chat.jsx'
 import {
   HashRouter as Router,
   redirect,
@@ -6,10 +7,12 @@ import {
   Navigate,
 } from 'react-router-dom';
 
+
+
 export default function Home(){
   return(
     <>
-    <h1>hey there square</h1>
+    <Chat/>
     </>
     
   )

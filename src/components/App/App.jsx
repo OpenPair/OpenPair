@@ -1,3 +1,4 @@
+import '../styles/main.scss'
 import React, { useEffect } from 'react';
 import {
   HashRouter as Router,
@@ -7,22 +8,14 @@ import {
 } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
-<<<<<<< Updated upstream
-import './App.css'
-import '../styles/main.scss'
-import Settings from '../Settings/Settings.jsx'
-import Home from '../home/Home.jsx'
-=======
-import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 import ViteStartup from '../ViteStartup/ViteStartup.jsx';
-import LoginPage from '../LoginPage/LoginPage.jsx';
-import RegisterPage from '../RegisterPage/RegisterPage.jsx';
-import UserPage from '../UserPage/UserPage.jsx';
->>>>>>> Stashed changes
 import Sidebar from '../Sidebar/sidebar.jsx'
 import About from '../AboutPage/About.jsx'
 import Help from '../Help/Help.jsx'
 import Contact from '../ContactPage/Contact.jsx'
+import Home from '../home/Home.jsx'
+import Settings from '../Settings/Settings.jsx'
+
 
 /* import ProtectedRoute from '../ProtectedRoute/ProtectedRoute.jsx';
 * import LoginPage from '../LoginPage/LoginPage.jsx';
@@ -33,7 +26,6 @@ import Contact from '../ContactPage/Contact.jsx'
 const AppLayout = () => (
   <>
   <Sidebar />
-  <Outlet />
   </>
 );
 
