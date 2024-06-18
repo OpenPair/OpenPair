@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react'
 import { Button } from 'reactstrap'
-import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap'
+import { Link,Outlet } from 'react-router-dom';
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import '../styles/main.scss'
 
@@ -29,15 +29,26 @@ export default function Sidebar(){
 	    onClick={toggleExpand} />
 	)}
       </div>
-      <p>This is a custom sidebar component.</p>
+      <nav>
+	<p>New Chat Btn</p>
+	<Link to="/">Home</Link>
+	<br/>
+	<Link to="/about">About</Link>
+	<br/>
+	<Link to="/contact">Contact</Link>
+	<br/>
+	<Link to="/settings">Settings</Link>
+	<br/>
+	<Link to="/help">Help</Link>
+	<br/>
+      </nav>
     </div>
     
     {/* Main Content */}
     <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
-      <h1>Main Content Area</h1>
     </div>
+    <Outlet/>
     </div>
-
     
   )
 }
