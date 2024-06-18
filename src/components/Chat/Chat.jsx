@@ -1,5 +1,6 @@
 import '../styles/main.scss'
 import { Input,Button } from 'reactstrap'
+import { IoIosSend } from "react-icons/io";
 export default function Chat(){
 
   return(
@@ -13,7 +14,9 @@ export default function Chat(){
 	</div>
     <div className="bottom-chat-actions">
       <Input />
-      <Button />
+      <Button>
+	<IoIosSend />
+      </Button>
     </div>
     </div>
     </>

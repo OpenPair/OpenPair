@@ -2,7 +2,6 @@ import '../styles/main.scss'
 import React, { useEffect } from 'react';
 import {
   HashRouter as Router,
-  Outlet,
   Route,
   Routes,
 } from 'react-router-dom';

@@ -1,6 +1,6 @@
 export default function Settings(){
   return(
     
-  <h1>Hey There Bear</h1>
+  <h1>Settings</h1>
   )
 }
