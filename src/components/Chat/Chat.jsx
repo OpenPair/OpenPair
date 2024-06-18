@@ -1,8 +1,13 @@
+import '../styles/main.scss'
+import { Input,Button } from 'reactstrap'
 export default function Chat(){
 
   return(
     <>
-    <h1>Hey there blair</h1>
+      <div className="chatBox">
+	<Input />
+	<Button />
+      </div>
     </>
   )
 }
