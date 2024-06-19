@@ -24,7 +24,7 @@ import Settings from '../Settings/Settings.jsx'
 
 const AppLayout = () => (
   <>
-  <Sidebar />
+    <Sidebar />
   </>
 );
 
@@ -41,13 +41,13 @@ export default function App() {
     <Router>
       <div className="app-container">
         <Routes>
-	  <Route element={<AppLayout />}>
-	    <Route path="/" element={<Home />} />
-	    <Route path="/settings" element={<Settings />} />
-	    <Route path="/about" element={<About />} />
-	    <Route path="/help" element={<Help />} />
-	    <Route path="/contact" element={<Contact />} />
-	  </Route>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
         </Routes>
       </div>
 
