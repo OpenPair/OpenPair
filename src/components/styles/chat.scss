@@ -1,0 +1,15 @@
+.chatBox-container{
+  display:flex;
+  flex: 1;
+  flex-direction: column;
+
+}
+
+.bottom-chat-actions{
+  display: flex;
+}
+
+.chatBox-content{
+  padding: 10px;
+  margin-top: auto;
+}

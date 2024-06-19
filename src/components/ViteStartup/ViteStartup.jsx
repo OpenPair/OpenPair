@@ -46,7 +46,7 @@ function ViteStartup() {
     const getConversation = () => {
         api.get('api/get-conversation')
             .then(response => {
-                // console.log(response.data);
+                console.log(response.data);
                 setConvo(response.data)
             }).catch(err => {
                 console.log(err);

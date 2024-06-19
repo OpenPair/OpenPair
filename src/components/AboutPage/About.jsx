@@ -1,8 +1,9 @@
 export default function AboutPage(){
 
   return(
-    <h1>HEy there square</h1>
-
+    <>
+      <h1>About</h1>
+    </>
     
   )
 }
