@@ -40,6 +40,7 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
             )
+        print('The messages made it to the view.')
         for message in messages:
             message.vocab = extract_vocab(message.content[0].text.value)
         serialized_messages = MessageSerializer(messages, many=True)

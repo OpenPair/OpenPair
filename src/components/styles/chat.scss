@@ -7,9 +7,12 @@
 
 .bottom-chat-actions{
   display: flex;
+  gap: 5px;
 }
 
 .chatBox-content{
   padding: 10px;
+  height: 100vh;
   margin-top: auto;
+  overflow: scroll;
 }

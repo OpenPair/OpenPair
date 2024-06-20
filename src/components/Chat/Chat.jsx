@@ -21,7 +21,7 @@ export default function Chat() {
     api.post('api/query-client/', {
       message: hidden_query
     }).then(response => {
-      // console.log(response.data);
+      console.log('THEN:', response.data);
       setConvo(response.data)
       setIsLoading(false)
     }).catch(err => {
@@ -77,11 +77,12 @@ export default function Chat() {
           )}
         </div>
         <form onSubmit={(e) => queryAI(e)}>
-          <div className="bottom-chat-actions">
+          <div className="bottom-chat-actions" style={{padding: '10px', marginBottom: '10px'}}>
             <Input
               placeholder='What will you ask about?'
               onChange={(e) => setQuery(e.target.value)}
-              value={query} />
+              value={query}
+              className='rounded-4' />
             <Button
               type='submit'
               disabled={isDisabled()}>

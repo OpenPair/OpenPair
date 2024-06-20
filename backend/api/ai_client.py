@@ -47,6 +47,7 @@ def create_asst_thrd(
 """
 def run(thread_id, assistant_id, user_message):
   # Creates the message that gets appended to the conversation.
+  print('In the client run function')
   message = client.beta.threads.messages.create(
     thread_id=thread_id,
     role='user',
@@ -68,7 +69,7 @@ def run(thread_id, assistant_id, user_message):
     # pprint.pformat(messages)
   else:
     print(run.status)
-
+  print("The Ai response is generated.")
   return messages
 
 def rerun(thread_id, assistant_id, message_id, regen_message):
