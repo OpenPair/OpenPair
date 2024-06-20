@@ -25,4 +25,4 @@ else {
     });
 }
 
-module.exports = pool;
+export default pool;

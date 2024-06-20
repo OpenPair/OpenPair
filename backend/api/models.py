@@ -9,3 +9,10 @@ class LatestCount(models.Model):
 
     def __str__(self):
         return self.current_count
+    
+class Vocab(models.Model):
+    word = models.CharField(max_length=100)
+    definition = models.CharField()
+
+    def __str__(self):
+        return self.word
