@@ -49,6 +49,7 @@ def query_openai(request):
 def get_all_messages(request):
     if 'thread_id' not in request.session:
         return Response(status=status.HTTP_200_OK)
+    print(request.session['assistant_id'])
     messages = ai_client.get_conversation(thread_id=request.session['thread_id'])
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)

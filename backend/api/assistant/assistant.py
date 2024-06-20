@@ -94,7 +94,7 @@ file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
 # Confirm upload
 print(file_batch.status)
 print(file_batch.file_counts)
-print(f"All files uploaded: ${str(file_batch.file_counts) == str(tech_docs.length)}")
+print(f"All files uploaded: {file_batch.file_counts} == {len(tech_docs)}")
 
 # Update the assistant with the vector store
 assistant = client.beta.assistants.update(

@@ -2,6 +2,8 @@ import '../styles/main.scss'
 import { Input, Button } from 'reactstrap'
 import { IoIosSend } from "react-icons/io";
 import { useEffect, useState } from 'react';
+import AIResponse from '../AIResponse/AIResponse';
+import UserResponse from '../UserResponse/UserResponse';
 import api from '../../hooks/api';
 
 export default function Chat() {
@@ -52,13 +54,13 @@ export default function Chat() {
         <div className="chatBox-content">
           {convo && convo.toReversed().map((message) => {
             if (message.role === 'assistant') {
-              return (<p key={message.id}>
-                {message.content[0].text.value}
-              </p>)
+              return (
+                <AIResponse
+                  key={message.id}
+                  message={message.content[0].text.value} />)
             }
-            return (<p key={message.id}>
-              {message.content[0].text.value}
-            </p>)
+            return (<UserResponse key={message.id} message={message.content[0].text.value}/>)
+  
           })}
           {isLoading && (
             <>

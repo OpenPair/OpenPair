@@ -11,6 +11,7 @@ load_dotenv()
 api_key = getenv('OPENAI_API_KEY')
 organization = getenv('ORGANIZATION')
 project = getenv('PROJECT')
+vector_store_id = getenv('VECTOR_STORE_ID')
 
 client = OpenAI(
   api_key = api_key,
@@ -32,6 +33,8 @@ def create_asst_thrd(
       instructions= instructions,
       model='gpt-3.5-turbo',
       tools=[{'type': 'file_search'}],
+      tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}},
+
   )
 
   thread = client.beta.threads.create()
@@ -113,6 +116,31 @@ def get_conversation(thread_id):
     thread_id=thread_id
   )
   return messages
+
+def create_vector_store(tech_docs):
+  vector_store = client.beta.vector_stores.create(
+    name = 'tech_docs'
+  )
+
+  file_streams = [open(path, 'rb') for path in tech_docs]
+
+  file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+    vector_store_id=vector_store.id,
+    files=file_streams
+  )
+
+  print(file_batch.status)
+  print(file_batch.file_counts)
+  print(f"All files uploaded: {file_batch.file_counts} == {len(tech_docs)}")
+
+  return vector_store
+
+def update_asst(assistant_id, vector_store_id):
+  assistant = client.beta.assistants.update(
+  assistant_id=assistant_id,
+  tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}},
+)
+  return assistant
 
 
 # ! A function to comprehend the data from AI assistant better. 
