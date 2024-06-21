@@ -30,7 +30,23 @@
   }
 }
 
+.sidebar-container{
+  display:flex;
+  flex-direction: column;
+}
+
 .main-content {
   transition: margin-left 0.3s ease;
   padding: 20px;
+}
+#nav-links {
+  color: white;
+  text-decoration: none;
+  padding: 5px;
+  margin: 5px;
+
+
+}
+#nav-house-icon{
+  margin-right: 5px;
 }

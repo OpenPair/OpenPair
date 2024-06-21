@@ -4,6 +4,8 @@ import { Button } from 'reactstrap'
 import { Link,Outlet } from 'react-router-dom';
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import '../styles/main.scss'
+import { SidebarData } from './sidebarData.jsx'
+import { BsHouseDoor,BsGear,BsEnvelope,BsPencil,BsQuestionLg } from "react-icons/bs";
 
 /**
    Basic custom Sidebar Component
@@ -16,7 +18,7 @@ export default function Sidebar(){
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="sidebar-container">
       {/* Sidebar */}
     <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
       
@@ -30,20 +32,38 @@ export default function Sidebar(){
 	)}
       </div>
       <nav>
-	<p>New Chat Btn</p>
-	<Link to="/">Home</Link>
+	<Link to="/">
+	  <BsHouseDoor id="nav-house-icon" />
+	Home
+	</Link>
 	<br/>
-	<Link to="/about">About</Link>
+
+	<Link to="/about">
+	<BsPencil />
+	  About
+	</Link>
 	<br/>
-	<Link to="/contact">Contact</Link>
+
+	<Link to="/contact">
+	  <BsEnvelope />
+	  Contact
+	</Link>
 	<br/>
-	<Link to="/settings">Settings</Link>
+
+	<Link to="/settings">
+	<BsGear />
+	  Settings
+	</Link>
 	<br/>
-	<Link to="/help">Help</Link>
+
+	<Link to="/help">
+	  <BsQuestionLg />
+	  Help
+	</Link>
 	<br/>
+	
       </nav>
     </div>
-    
     {/* Main Content */}
     <div>
     </div>
