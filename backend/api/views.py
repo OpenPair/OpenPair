@@ -52,6 +52,8 @@ def get_all_messages(request):
         return Response(status=status.HTTP_200_OK)
     print(request.session['assistant_id'])
     messages = ai_client.get_conversation(thread_id=request.session['thread_id'])
+    for message in messages:
+        message.vocab = extract_vocab(message.content[0].text.value)
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
@@ -119,7 +121,8 @@ def extract_vocab(res):
     # return words_in_res
     words_in_res = []
     for word in word_list:
-        if not res.lower().find(f" {word.word.lower()}") == -1:
+        index_in_res = res.lower().find(f" {word.word.lower()}")
+        if not index_in_res == -1:
             words_in_res.append(word)
     return words_in_res
  

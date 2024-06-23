@@ -34,3 +34,4 @@ class MessageSerializer(serializers.Serializer):
     attachments = serializers.ListField(required=False)
     metadata = serializers.DictField(required=False)
     vocab = VocabSerializer(many=True, required=False)
+    # vocab = serializers.ListField

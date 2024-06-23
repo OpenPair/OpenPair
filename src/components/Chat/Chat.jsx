@@ -48,19 +48,26 @@ export default function Chat() {
     getConversation()
   }, [])
 
+  // I need to search the response text for words in the vocab list (which there should be)
+  // Loop through list of words (if there are any), and separate response into an array of objects, tagged as isVocab.
+  // Map the array for the message, and if it is vocab, return a span with classes to make a tooltip, and 
+  // if it isn't, return a Markdown component.
+
   return (
     <>
       <div className="chatBox-container">
         <div className="chatBox-content">
           {convo && convo.toReversed().map((message) => {
+            const message_string = message.content[0].text.value
             if (message.role === 'assistant') {
               return (
                 <AIResponse
                   key={message.id}
-                  message={message.content[0].text.value} />)
+                  message={message.content[0].text.value}
+                  vocab={message.vocab} />)
             }
-            return (<UserResponse key={message.id} message={message.content[0].text.value}/>)
-  
+            return (<UserResponse key={message.id} message={message_string} />)
+
           })}
           {isLoading && (
             <>
@@ -77,7 +84,7 @@ export default function Chat() {
           )}
         </div>
         <form onSubmit={(e) => queryAI(e)}>
-          <div className="bottom-chat-actions" style={{padding: '10px', marginBottom: '10px'}}>
+          <div className="bottom-chat-actions" style={{ padding: '10px', marginBottom: '10px' }}>
             <Input
               placeholder='What will you ask about?'
               onChange={(e) => setQuery(e.target.value)}
