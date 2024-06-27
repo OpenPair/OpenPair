@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from typing_extensions import override
 
 # Function to create a thread using user file
-def upload_user_file(user_file, assistant, assistant_instructions, client):
+def upload_user_file(user_file, assistant, assistant_instructions, client, message_content):
     """
     Upload a user file to the assistant's vector store and create a thread with the file attached.
 
@@ -21,6 +21,7 @@ def upload_user_file(user_file, assistant, assistant_instructions, client):
     :param assistant: Assistant object (openai.Assistant)
     :param assistant_instructions: Instructions for the assistant (string)
     :param client: OpenAI client object (openai.OpenAI)
+    :param message_content: Content of the message (string)
     :return: None
     """
     message_file = client.files.create(
@@ -32,7 +33,7 @@ def upload_user_file(user_file, assistant, assistant_instructions, client):
     messages = [
         {
         "role": "user",
-        "content": "How many shares of AAPL were outstanding at the end of of October 2023?",
+        "content": message_content,
         # Attach the new file to the message.
         "attachments": [
             { "file_id": message_file.id, "tools": [{"type": "file_search"}] }
@@ -70,7 +71,7 @@ def upload_user_file(user_file, assistant, assistant_instructions, client):
         def on_message_done(self, message) -> None:
             """
             Print the assistant's response to the console.
-            
+
             :param message: The assistant's message (openai.Message)
             :return: None
             """
