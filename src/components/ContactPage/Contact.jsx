@@ -1,5 +1,5 @@
 export default function ContactPage(){
   return(
-    <h1>Give me ur money</h1>
+    <h1>Contact</h1>
   )
 }
