@@ -2,7 +2,6 @@ from openai import OpenAI, AssistantEventHandler
 from typing_extensions import override
 from dotenv import load_dotenv
 from os import getenv
-import pprint
 
 load_dotenv()
 
@@ -13,39 +12,42 @@ organization = getenv('ORGANIZATION')
 project = getenv('PROJECT')
 vector_store_id = getenv('VECTOR_STORE_ID')
 
+
+# ! Setup OpenAI with api key, etc.
 client = OpenAI(
   api_key = api_key,
   organization = organization,
   project = project,
 )
 
-"""
-! Creates the AI assistant with its applicable settings, 
-! as well as the thread. Returns the created assistant and thread, 
-! both with id properties.
-! Args: instructions -- str, instructions for the assistant. Defaults to coding tutor.
-"""
-def create_asst_thrd(
-    instructions = 'You are tutor that simplifies coding documentation for beginning software developers'
-    ):
+def create_asst_thrd(instructions = 'You are tutor that simplifies coding documentation for beginning software developers'):
+  """
+  Creates the AI assistant with its applicable settings, 
+  as well as the thread. Returns the created assistant and thread, 
+  both with id properties.
+  Args: instructions -- str, instructions for the assistant. Defaults to coding tutor.
+  """
+  # Creates a new Assistant
   assistant = client.beta.assistants.create(
-      name = 'Tech Documentation Simplifier',
-      instructions= instructions,
+      name='Tech Documentation Simplifier',
+      instructions=instructions,
       model='gpt-3.5-turbo',
       tools=[{'type': 'file_search'}],
       tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}},
-
   )
 
+  #  Creates a new Thread (series of messages)
   thread = client.beta.threads.create()
 
   return {"assistant": assistant, "thread": thread}
 
-"""
-! Takes the current thread_id, assistant_id, and whatever message user has typed,
-! appends it to the conversation, and returns the whole conversation.
-"""
+
 def run(thread_id, assistant_id, user_message):
+  """
+  Takes the current thread_id, assistant_id, and whatever message user has typed,
+  appends it to the conversation, and returns the whole conversation.
+  """
+
   # Creates the message that gets appended to the conversation.
   print('In the client run function')
   message = client.beta.threads.messages.create(
@@ -73,18 +75,18 @@ def run(thread_id, assistant_id, user_message):
   return messages
 
 def rerun(thread_id, assistant_id, message_id, regen_message):
-  # delete the message from the thread, and have it return a new message that is restated.
-  #// 1 Delete message
-  #// 2 Create a new message asking for a rephrased response
-  #// 3 Create a run with new instructions of the assistant
-  #// 4 Delete the user's message that we crafted
-  #// 5 Return list of messages
+  """
+  ! Not being used. 
+  Regenerates a response from OpenAI, and returns whole conversation.
+  """
 
+  #  Deletes old AI message
   deleted = client.beta.threads.messages.delete(
       thread_id=thread_id,
       message_id=message_id,
     )
 
+  # Creates a new user message instructing to rephrase.
   prompt = f"Please rephrase this response using simpler language and analogies: {regen_message}"
   message = client.beta.threads.messages.create(
     thread_id=thread_id,
@@ -92,6 +94,7 @@ def rerun(thread_id, assistant_id, message_id, regen_message):
     content=prompt,
   )
 
+  # Runs model with new user message
   run = client.beta.threads.runs.create_and_poll(
     thread_id=thread_id,
     assistant_id=assistant_id,
@@ -99,6 +102,7 @@ def rerun(thread_id, assistant_id, message_id, regen_message):
   )
 
   if run.status == 'completed': 
+    #  Deletes the user message from the thread
     client.beta.threads.messages.delete(
       message_id=message.id,
       thread_id=thread_id,
@@ -113,18 +117,30 @@ def rerun(thread_id, assistant_id, message_id, regen_message):
     print(run.status)
 
 def get_conversation(thread_id):
+  """
+  A function that simply returns all the messages in a given thread.
+  """
   messages = client.beta.threads.messages.list(
     thread_id=thread_id
   )
   return messages
 
 def create_vector_store(tech_docs):
+  """
+  Creates a vector store.
+  Args: tech_docs -- a list of file paths.
+  Returns a vector store object (not the actual vector store).
+  """
+
+  #  Creates the empty store
   vector_store = client.beta.vector_stores.create(
     name = 'tech_docs'
   )
 
+  # Opening files
   file_streams = [open(path, 'rb') for path in tech_docs]
 
+  # Uploading files to store.
   file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
     vector_store_id=vector_store.id,
     files=file_streams
@@ -137,6 +153,11 @@ def create_vector_store(tech_docs):
   return vector_store
 
 def update_asst(assistant_id, vector_store_id):
+  """
+  A function to add a vector store to an assistant. 
+  Returns assistant object.
+  """
+  #  Adds the vector store as a tool resource to an assistant.
   assistant = client.beta.assistants.update(
   assistant_id=assistant_id,
   tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}},
@@ -191,8 +212,3 @@ def update_asst(assistant_id, vector_store_id):
 # )
 
 # print(chat_completion.choices[0].message)
-
-
-# ? When a user pings the server for the first time, if they don't have a thread id, it should be added to the session. 
-#  If there is a thread_id already, we add it to the session to be referenced later.
-#  The server will send back all the messages that pertain to that thread.

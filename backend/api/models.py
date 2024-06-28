@@ -3,6 +3,7 @@ from django.contrib.sessions.models import Session
 
 # Create your models here.
 
+#  ! This class doesn't get used.
 class LatestCount(models.Model):
     current_count = models.IntegerField()
     author = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='current_count')

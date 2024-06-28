@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import LatestCount, Vocab
 
+# ! This serializer is a test, and doesn't get used. 
 class CurrentCountSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -13,7 +14,7 @@ class VocabSerializer(serializers.ModelSerializer):
         model = Vocab
         fields = ['id', 'word', 'definition']
 
-# ? Attempting to serialize the OpenAi response object
+# ! Serialize the OpenAi response object
 class TextSerializer(serializers.Serializer):
     value = serializers.CharField()
     annotations = serializers.ListField(child=serializers.CharField(), required=False)

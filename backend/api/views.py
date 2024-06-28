@@ -7,16 +7,17 @@ from .models import Vocab
 from .serializers import VocabSerializer
 from api.serializers import MessageSerializer
 
-"""
-Route: 'api/query-client/'
-Expects: An object like: 
-{
-    "message": "Here is what the user was asking the AI assistant."
-}
-Response: 200, with list of entire conversation.
-"""
+
 @api_view(['GET', 'POST'])
 def query_openai(request):
+    """
+    Route: 'api/query-client/'
+    Expects: An object like: 
+    {
+        "message": "Here is what the user was asking the AI assistant."
+    }
+    Response: 200, with list of entire conversation.
+    """
     print(f"request.data: {request.data}")
     if 'thread_id' not in request.session:  # If the thread_id does not exist in a current session:
         created_assistant = ai_client.create_asst_thrd()  # creates a new assistant and thread
@@ -46,8 +47,14 @@ def query_openai(request):
         serialized_messages = MessageSerializer(messages, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
     
+
+
 @api_view(["GET"])
 def get_all_messages(request):
+    """
+    Route: 'api/get-conversation/'
+    Response: 200, with list of whole conversation, if it exists. 
+    """
     if 'thread_id' not in request.session:
         return Response(status=status.HTTP_200_OK)
     print(request.session['assistant_id'])
@@ -57,17 +64,21 @@ def get_all_messages(request):
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
-"""
-Route: 'api/regen/'
-Expects: An object like: 
-{
-    "message": "Here is what the user was asking the AI assistant.",
-    "message_id": "msg_abc12",
-}
-Response: 200, with list of entire conversation. 400 if there is no current thread/assistant.
-"""   
-@api_view(['GET'])
+
+
+
+@api_view(['POST'])
 def regenerate_response(request):
+    """
+    Route: 'api/regen/'
+    Expects: An object like: 
+    {
+        "message": "Here is what the user was asking the AI assistant.",
+        "message_id": "msg_abc12",
+    }
+    Response: 200, with list of entire conversation. 400 if there is no current thread/assistant.
+    """ 
+    # TODO refactor to include a param in the url instead of a 'message_id' key.
     print(f"Old answer: {request.data['message']}\nMessage ID: {request.data['message_id']}")
     if 'assistant_id' not in request.session:
         return Response('This is not allowed.', status=status.HTTP_400_BAD_REQUEST)
@@ -83,20 +94,23 @@ def regenerate_response(request):
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
-"""
-Route: 'api/definition/:word/' expects a string that is the word being looked up. Case-insensitive
-Response: 200 {
-    "id": 5,
-    "word": "Class",
-    "definition": "In object-oriented programming, a blueprint for creating objects, providing initial values for state and implementations of behavior."
-}
-404 if the word isn't found with an object like this: 
-{
-    "detail": "No Vocab matches the given query."
-}
-"""
+
+
+
 @api_view(["GET"])
 def definition(request, word):
+    """
+    Route: 'api/definition/:word/' expects a string that is the word being looked up. Case-insensitive
+    Response: 200 {
+        "id": 5,
+        "word": "Class",
+        "definition": "In object-oriented programming, a blueprint for creating objects, providing initial values for state and implementations of behavior."
+    }
+    404 if the word isn't found with an object like this: 
+    {
+        "detail": "No Vocab matches the given query."
+    }
+    """
     word = get_object_or_404(Vocab, word__iexact=word) # Queries the DB for word that matches the work in the URL
     print(f"Word: {word}")
     serialized_word = VocabSerializer(word)
@@ -104,23 +118,15 @@ def definition(request, word):
     return Response(serialized_word.data, status=status.HTTP_200_OK)
 
 
-# I need a function that will look through each of the AI's responses, and identify the words that match vocab words.
-# 1. Get all the vocab words
-# 2. For each word, check if responses contain any vocab word.
-# 3. Append the word and definition to a dictionary.
-# 4. Dictionary is attached to message object.
-# 5. Message object is serialized and sent over.
 
 def extract_vocab(res):
-    word_list = Vocab.objects.all()
-    # words_in_res = {}
-    # for word in word_list:
-    #     if not res.lower().find(f" {word.word.lower()}") == -1:
-    #         print(f"Word: {word.word}\nDefinition: {word.definition}")
-    #         words_in_res[word.word] = word.definition
-    # return words_in_res
+    """
+    A function that finds vocab words in a given text. 
+    Returns a list of vocab objects.
+    """
+    word_list = Vocab.objects.all()  # Gets all the vocab from the DB.
     words_in_res = []
-    for word in word_list:
+    for word in word_list:  # Loops through and finds words that are in the given text.
         index_in_res = res.lower().find(f" {word.word.lower()}")
         if not index_in_res == -1:
             words_in_res.append(word)
