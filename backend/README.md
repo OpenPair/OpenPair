@@ -18,6 +18,7 @@ VECTOR_STORE_ID=<AN-ID-FOR-AN-EXISTING-OPENAI-VECTOR-STORE>
 npm run server # this now runs the Django server.
 npm run client # this runs the Vite React frontend.
 ```
+6. There are 50 vocabulary words written in PostgreSQL in the `database.sql` file that should be added to the vocab table. 
 
 ## Lay of the Land
 ```
