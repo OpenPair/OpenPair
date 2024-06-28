@@ -21,10 +21,15 @@ import Settings from '../Settings/Settings.jsx'
 * import RegisterPage from '../RegisterPage/RegisterPage.jsx';
  * import UserPage from '../UserPage/UserPage.jsx'; */
 
-
+/**
+   The App layout variable allows us to utilize the < Outlet/>
+   component in order to have a properly functioning sidebar
+   Learn more about the Outlet component here:
+   https://reactrouter.com/en/main/components/outlet
+*/
 const AppLayout = () => (
   <>
-    <Sidebar />
+  <Sidebar />
   </>
 );
 

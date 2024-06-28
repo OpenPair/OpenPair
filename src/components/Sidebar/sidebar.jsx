@@ -75,6 +75,8 @@ export default function Sidebar() {
 	  Help
 	</Link>
 	<br/>
+	
+	<Outlet/>
       </nav>
     </div>
   )

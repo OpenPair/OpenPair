@@ -1,4 +1,4 @@
-# Setup
+# Getting Started
 
 1. Clone repo locally
 2. Create PostgreSQL database locally named 'openpair'

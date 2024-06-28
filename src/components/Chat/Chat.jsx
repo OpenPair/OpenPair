@@ -49,23 +49,6 @@ export default function Chat() {
   return (
     <>
       <div className="chatBox-container">
-<<<<<<< HEAD
-	<div className="chatBox-content">
-	  Some content here
-	  Some more content here as well
-	  <br/>
-	  Some more content here as well
-	</div>
-    <div className="bottom-chat-actions">
-      <Input id="chat-input" />
-
-      <Button id="send-chat-btn">
-	<IoIosSend />
-      </Button>
-
-    </div>
-    </div>
-=======
         <div className="chatBox-content">
           {convo && convo.toReversed().map((message) => {
             if (message.role === 'assistant') {
@@ -105,7 +88,6 @@ export default function Chat() {
           </div>
         </form>
       </div>
->>>>>>> origin/feature/chat
     </>
   )
 }
