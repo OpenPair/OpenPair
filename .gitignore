@@ -137,3 +137,5 @@ pyvenv.cfg
 __pycache__/
 
 .vscode/
+
+.dir-locals.el
