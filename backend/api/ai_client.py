@@ -44,7 +44,7 @@ def create_asst_thrd(
 """
 def run(thread_id, assistant_id, user_message):
   # Creates the message that gets appended to the conversation.
-  message = client.beta.threads.messages.create(
+  messages = client.beta.threads.messages.create(
     thread_id=thread_id,
     role='user',
     content=user_message

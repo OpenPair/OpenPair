@@ -29,10 +29,12 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
         )
+        
+        print(f"message: {messages}")
         serialized_messages = MessageSerializer(messages, many=True) # Serializers translate into a json object
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
     else:
-        # print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
+        print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
         thread_id = request.session['thread_id']
         assistant_id = request.session['assistant_id']
         messages = ai_client.run(
@@ -40,8 +42,9 @@ def query_openai(request):
             assistant_id=assistant_id,
             user_message=request.data['message']
             )
-        for message in messages:
-            message.vocab = extract_vocab(message.content[0].text.value)
+        print(f"message: {messages}")
+        # for message in messages:
+        #     message.vocab = extract_vocab(message.content[0].text.value)
         serialized_messages = MessageSerializer(messages, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
     
@@ -74,8 +77,8 @@ def regenerate_response(request):
         message_id=request.data['message_id'],
         regen_message=request.data['message']
     )
-    for message in messages:
-        message.vocab = extract_vocab(message.content[0].text.value)
+    # for message in messages:
+    #     message.vocab = extract_vocab(message.content[0].text.value)
     serialized_messages = MessageSerializer(messages, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
@@ -107,19 +110,19 @@ def definition(request, word):
 # 4. Dictionary is attached to message object.
 # 5. Message object is serialized and sent over.
 
-def extract_vocab(res):
-    word_list = Vocab.objects.all()
-    # words_in_res = {}
-    # for word in word_list:
-    #     if not res.lower().find(f" {word.word.lower()}") == -1:
-    #         print(f"Word: {word.word}\nDefinition: {word.definition}")
-    #         words_in_res[word.word] = word.definition
-    # return words_in_res
-    words_in_res = []
-    for word in word_list:
-        if not res.lower().find(f" {word.word.lower()}") == -1:
-            words_in_res.append(word)
-    return words_in_res
+# def extract_vocab(res):
+#     word_list = Vocab.objects.all()
+#     # words_in_res = {}
+#     # for word in word_list:
+#     #     if not res.lower().find(f" {word.word.lower()}") == -1:
+#     #         print(f"Word: {word.word}\nDefinition: {word.definition}")
+#     #         words_in_res[word.word] = word.definition
+#     # return words_in_res
+#     words_in_res = []
+#     for word in word_list:
+#         if not res.lower().find(f" {word.word.lower()}") == -1:
+#             words_in_res.append(word)
+#     return words_in_res
  
 # Create your views here.
 # ? Test POST
