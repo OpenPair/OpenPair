@@ -15,6 +15,7 @@
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
+    "boto3": "^0.0.1",
     "cookie-session": "^2.1.0",
     "dotenv": "^16.4.1",
     "express": "^4.19.2",
