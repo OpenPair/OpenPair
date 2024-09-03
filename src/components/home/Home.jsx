@@ -116,14 +116,3 @@ function ViteStartup() {
 }
 
 export default ViteStartup;
-
-
-// export default function Home(){
-//   return(
-//     <>
-//     <h1>OPEN PAIR</h1>
-
-//     </>
-    
-//   )
-// }
