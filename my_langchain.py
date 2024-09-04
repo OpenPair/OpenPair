@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-
 # Load environment variables from .env file
 load_dotenv()
 
@@ -10,9 +9,6 @@ langchain_api_key = os.getenv("LANGCHAIN_API_KEY")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Use the environment variables in your code
-print(f"LangChain Tracing: {langchain_tracing}")
-print(f"LangChain API Key: {langchain_api_key}")
-print(f"OpenAI API Key: {openai_api_key}")
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate

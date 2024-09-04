@@ -1,5 +1,9 @@
 export default function Help(){
   return (
-    <h1>Help me Babe</h1>
+    <div>
+    <h1>Help</h1>
+    <h3>Here you can find help with the project</h3>
+    </div>
+
   )
 }

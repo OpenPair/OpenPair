@@ -1,5 +1,9 @@
 export default function ContactPage(){
   return(
-    <h1>Give me ur money</h1>
+    <div>
+    <h1>Contact us</h1>
+    <p>Email: openpair@gmail.com</p>
+    <p>Phone: 123-456-7890</p>
+    </div>
   )
 }
