@@ -39,7 +39,7 @@ function ViteStartup() {
         api.post('api/query-client/', {
             message: query
         }).then(response => {
-            // console.log(response.data);
+            console.log(response.data);
             setConvo(response.data)
             setQuery('')
             setIsLoading(false)
@@ -54,7 +54,7 @@ function ViteStartup() {
     const getConversation = () => {
         api.get('api/get-conversation')
             .then(response => {
-                // console.log(response.data);
+                console.log(response.data);
                 setConvo(response.data)
             }).catch(err => {
                 console.log(err);
@@ -88,6 +88,17 @@ function ViteStartup() {
                 </a>
             </div>
             <h1>OpenPair</h1>
+            <div className="card">
+                <form onSubmit={(e) => queryAI(e)} style={styles.form}>
+                    <input
+                        type="text"
+                        placeholder='What will you ask about?'
+                        onChange={(e) => setQuery(e.target.value)}
+                        value={query} />
+                    <button type="submit" disabled={isDisabled()}>Ask</button>
+                </form>
+
+            </div>
             <div>
                 {convo && convo.toReversed().map((message) => {
                     if (message.role === 'assistant') {
@@ -99,17 +110,6 @@ function ViteStartup() {
                         {message.content[0].text.value}
                     </p>)
                 })}
-            </div>
-            <div className="card">
-                <form onSubmit={(e) => queryAI(e)} style={styles.form}>
-                    <input
-                        type="text"
-                        placeholder='What will you ask about?'
-                        onChange={(e) => setQuery(e.target.value)}
-                        value={query} />
-                    <button type="submit" disabled={isDisabled()}>Ask</button>
-                </form>
-
             </div>
         </>
     )
