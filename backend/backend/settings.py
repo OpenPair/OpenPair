@@ -14,17 +14,18 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
-import boto3
+# import boto3
 
 load_dotenv()
 
-# Connecting to S3 bucket for doc repo. Saved as variable 's3_bucket'
-
+# Connecting to S3 bucket for doc repo. Will be used later for document storage
+"""
 s3_api = os.getenv("S3_API_KEY")
 s3_secret = os.getenv("S3_SECRET_KEY")
 session = boto3.Session( aws_access_key_id = s3_api, aws_secret_access_key = s3_secret)
 s3 = session.resource('s3')
 s3_bucket = s3.Bucket('openpair')
+"""
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
