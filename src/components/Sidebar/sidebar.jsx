@@ -46,10 +46,9 @@ export default function Sidebar(){
     
     {/* Main Content */}
     <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
+      <Outlet/>
     </div>
-    <Outlet/>
     </div>
-    
   )
 }
 
