@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
-import './styles/main.scss';
+import '.././styles/main.scss';
 
 function Chat() {
   const [messages, setMessages] = useState([]);
