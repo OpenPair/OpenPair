@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
 import '.././styles/main.scss';
+import api from '../../hooks/api'
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -30,19 +31,41 @@ function Chat() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    
+    try {
+      const response = await api.post('/api/query-client/', {
+        message: input.trim(),
+      });
 
-    // Simulate AI response
-    setTimeout(() => {
+      // The response contains an array of messages, we want the last one (assistant's response)
+      const lastMessage = response.data[response.data.length - 1];
+      
       const assistantMessage = {
+        id: lastMessage.id,
+        // Get the actual message text from the content array
+        content: lastMessage.content[0].text.value,
+        role: lastMessage.role,
+        timestamp: new Date(lastMessage.created_at * 1000), // Convert Unix timestamp to Date
+        // If you want to include vocabulary
+        vocab: lastMessage.vocab || []
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Error', error);
+
+      const errorMessage = {
         id: (Date.now() + 1).toString(),
-        content: "This is a simulated response. Replace this with your actual RAG implementation.",
+        content: "Sorry, there was an error processing your request. Please try again later.",
         role: 'assistant',
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
-  };
+    }
+  }
 
   return (
     <div className="app">
@@ -74,6 +97,18 @@ function Chat() {
               </div>
               <div className={`message__content message__content--${message.role}`}>
                 <p className="message__text">{message.content}</p>
+                {message.vocab && message.vocab.length > 0 && (
+                  <div className="message__vocab">
+                    <h4 className="message__vocab-title">Key Terms:</h4>
+                    <ul className="message__vocab-list">
+                      {message.vocab.map((term) => (
+                        <li key={term.id} className="message__vocab-item">
+                          <strong>{term.word}</strong>: {term.definition}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <span className="message__time">
                   {message.timestamp.toLocaleTimeString([], { 
                     hour: '2-digit', 
