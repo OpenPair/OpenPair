@@ -221,6 +221,40 @@ button {
     opacity: 0.7;
     margin-top: 0.5rem;
   }
+
+  &__vocab {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+
+    &-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #666;
+    }
+
+    &-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    &-item {
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      strong {
+        color: #2563eb;
+      }
+    }
+  }
 }
 
 // Input form
