@@ -47,13 +47,15 @@ function Chat() {
       }
 
       // Convert all messages from the API to our frontend format
-      const formattedMessages = response.data.map(msg => ({
-        id: msg.id,
-        content: msg.content[0].text.value,
-        role: msg.role,
-        timestamp: new Date(msg.created_at * 1000),
-        vocab: msg.vocab || []
-      }));
+      const formattedMessages = response.data
+        .sort((a, b) => a.created_at - b.created_at) // Sort by creation time, oldest first
+        .map(msg => ({
+          id: msg.id,
+          content: msg.content[0].text.value,
+          role: msg.role,
+          timestamp: new Date(msg.created_at * 1000),
+          vocab: msg.vocab || []
+        }));
 
       // Update the messages state with the full conversation history
       setMessages(formattedMessages);
