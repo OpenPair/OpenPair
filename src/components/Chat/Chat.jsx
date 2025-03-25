@@ -13,6 +13,39 @@ function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const fetchMessages = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('/api/get-conversation/');
+      
+      if (!Array.isArray(response.data)) {
+        console.error('Expected array response, got:', typeof response.data);
+        throw new Error('Invalid response format');
+      }
+
+      const formattedMessages = response.data
+        .sort((a, b) => a.created_at - b.created_at)
+        .map(msg => ({
+          id: msg.id,
+          content: msg.content[0].text.value,
+          role: msg.role,
+          timestamp: new Date(msg.created_at * 1000),
+          vocab: msg.vocab || []
+        }));
+
+      console.log('Fetched messages:', formattedMessages);
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
