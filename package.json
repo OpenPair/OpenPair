@@ -23,6 +23,7 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-http-backend": "^2.4.3",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.476.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",

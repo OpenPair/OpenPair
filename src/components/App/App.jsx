@@ -24,8 +24,7 @@ import Contact from '../ContactPage/Contact.jsx'
 
 const AppLayout = () => (
   <>
-  <Sidebar />
-  <Outlet />
+    <Sidebar />
   </>
 );
 

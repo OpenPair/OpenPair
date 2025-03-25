@@ -18,38 +18,37 @@ export default function Sidebar(){
   return (
     <div style={{ display: 'flex' }}>
       {/* Sidebar */}
-    <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
-      
-      <div className="sidebar-header">
-	{isExpanded ? (
-	  <BsArrowLeft
-	    onClick={toggleExpand}/>
-	) : (
-	  <BsArrowRight
-	    onClick={toggleExpand} />
-	)}
+      <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
+	
+	<div className="sidebar-header">
+	  {isExpanded ? (
+	    <BsArrowLeft
+	      onClick={toggleExpand}/>
+	  ) : (
+	    <BsArrowRight
+	      onClick={toggleExpand} />
+	  )}
+	</div>
+	<nav>
+	  <p>New Chat Btn</p>
+	  <Link to="/">Home</Link>
+	  <br/>
+	  <Link to="/about">About</Link>
+	  <br/>
+	  <Link to="/contact">Contact</Link>
+	  <br/>
+	  <Link to="/settings">Settings</Link>
+	  <br/>
+	  <Link to="/help">Help</Link>
+	  <br/>
+	</nav>
       </div>
-      <nav>
-	<p>New Chat Btn</p>
-	<Link to="/">Home</Link>
-	<br/>
-	<Link to="/about">About</Link>
-	<br/>
-	<Link to="/contact">Contact</Link>
-	<br/>
-	<Link to="/settings">Settings</Link>
-	<br/>
-	<Link to="/help">Help</Link>
-	<br/>
-      </nav>
+      
+      {/* Main Content */}
+      <div className="main-content">
+	<Outlet/>
+      </div>
     </div>
-    
-    {/* Main Content */}
-    <div className="main-content" style={{ marginLeft: isExpanded ? '300px' : '100px' }}>
-    </div>
-    <Outlet/>
-    </div>
-    
   )
 }
 
