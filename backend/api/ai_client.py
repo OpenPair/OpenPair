@@ -26,29 +26,21 @@ chain = prompt | model | StrOutputParser()
 
 def run(thread_id, assistant_id, user_message):
   # Creates the message that gets appended to the conversation.
-  message = client.beta.threads.messages.create(
-    thread_id=thread_id,
-    role='user',
-    content=user_message
-  )
+  try:
+    response = chain.invoke({"message": user_message})
 
-  # Runs the assistant with the new message
-  run = client.beta.threads.runs.create_and_poll(
-    thread_id=thread_id,
-    assistant_id=assistant_id,
-  )
+    messages = [{
+      'id': str(hash(response)),
+      'role': 'assistant',
+      'content': [{'text': {'value': response}}],
+      'created_at': int(time.time()) 
+    }] 
 
-  # Once the run is complete, a list of messages from the current thread is created
-  # and returned.
-  if run.status == 'completed': 
-    messages = client.beta.threads.messages.list(
-    thread_id=thread_id
-    )
-    # pprint.pformat(messages)
-  else:
-    print(run.status)
 
-  return messages
+    return messages
+  except Exception as e:
+    print(f"Error in Langchain processing: {e}")
+    raise
 
 def rerun(thread_id, assistant_id, message_id, regen_message):
   # delete the message from the thread, and have it return a new message that is restated.
