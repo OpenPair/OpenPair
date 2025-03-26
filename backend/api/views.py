@@ -15,23 +15,30 @@ Expects: An object like:
 }
 Response: 200, with list of entire conversation.
 """
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def query_openai(request):
     print(f"request.data: {request.data}")
     
     try:
-        # We no longer need thread_id and assistant_id, but keeping them as None
-        # to maintain the function signature
+        # Make sure we have a session
+        if not request.session.session_key:
+            request.session.create()
+            
         messages = ai_client.run(
-            thread_id=None,
-            assistant_id=None,
+            thread_id=request.session.session_key,  # Use session key for memory
+            assistant_id=None,  # Keep for compatibility
             user_message=request.data['message']
         )
         
-        for message in messages:
-            message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
+        # Get full chat history
+        chat_history = ai_client.get_chat_history(request.session.session_key)
+        
+        # Add vocab to all messages
+        for message in chat_history:
+            if 'vocab' not in message:  # Only process if vocab hasn't been added yet
+                message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
             
-        serialized_messages = MessageSerializer(messages, many=True)
+        serialized_messages = MessageSerializer(chat_history, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
         
     except Exception as e:
@@ -41,42 +48,34 @@ def query_openai(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-# You can remove these endpoints since we're not using them anymore:
-# - regenerate_response
-# - get_all_messages 
-@api_view(["GET"])
-def get_all_messages(request):
-    if 'thread_id' not in request.session:
-        return Response(status=status.HTTP_200_OK)
-    messages = ai_client.get_conversation(thread_id=request.session['thread_id'])
-    serialized_messages = MessageSerializer(messages, many=True)
+"""
+Route: 'api/chat-history/'
+Response: 200, with list of all messages in the current session.
+"""
+@api_view(['GET'])
+def get_chat_history(request):
+    """Get the chat history for the current session"""
+    if not request.session.session_key:
+        return Response([], status=status.HTTP_200_OK)
+        
+    chat_history = ai_client.get_chat_history(request.session.session_key)
+    
+    # Add vocab to all messages
+    for message in chat_history:
+        if 'vocab' not in message:
+            message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
+            
+    serialized_messages = MessageSerializer(chat_history, many=True)
     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
-"""
-Route: 'api/regen/'
-Expects: An object like: 
-{
-    "message": "Here is what the user was asking the AI assistant.",
-    "message_id": "msg_abc12",
-}
-Response: 200, with list of entire conversation. 400 if there is no current thread/assistant.
-"""   
-@api_view(['GET'])
-def regenerate_response(request):
-    print(f"Old answer: {request.data['message']}\nMessage ID: {request.data['message_id']}")
-    if 'assistant_id' not in request.session:
-        return Response('This is not allowed.', status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def clear_chat(request):
+    """Clear the chat history for the current session"""
+    if not request.session.session_key:
+        request.session.create()
     
-    messages = ai_client.rerun(
-        thread_id=request.session['thread_id'],
-        assistant_id=request.session['assistant_id'],
-        message_id=request.data['message_id'],
-        regen_message=request.data['message']
-    )
-    for message in messages:
-        message.vocab = extract_vocab(message.content[0].text.value)
-    serialized_messages = MessageSerializer(messages, many=True)
-    return Response(serialized_messages.data, status=status.HTTP_200_OK)
+    ai_client.clear_chat_history(request.session.session_key)
+    return Response(status=status.HTTP_200_OK)
 
 """
 Route: 'api/definition/:word/' expects a string that is the word being looked up. Case-insensitive
@@ -92,66 +91,16 @@ Response: 200 {
 """
 @api_view(["GET"])
 def definition(request, word):
-    word = get_object_or_404(Vocab, word__iexact=word) # Queries the DB for word that matches the work in the URL
+    word = get_object_or_404(Vocab, word__iexact=word)
     print(f"Word: {word}")
     serialized_word = VocabSerializer(word)
     print(f"Serialized: {serialized_word.data}")
     return Response(serialized_word.data, status=status.HTTP_200_OK)
 
-
-# I need a function that will look through each of the AI's responses, and identify the words that match vocab words.
-# 1. Get all the vocab words
-# 2. For each word, check if responses contain any vocab word.
-# 3. Append the word and definition to a dictionary.
-# 4. Dictionary is attached to message object.
-# 5. Message object is serialized and sent over.
-
 def extract_vocab(res):
     word_list = Vocab.objects.all()
-    # words_in_res = {}
-    # for word in word_list:
-    #     if not res.lower().find(f" {word.word.lower()}") == -1:
-    #         print(f"Word: {word.word}\nDefinition: {word.definition}")
-    #         words_in_res[word.word] = word.definition
-    # return words_in_res
     words_in_res = []
     for word in word_list:
         if not res.lower().find(f" {word.word.lower()}") == -1:
             words_in_res.append(word)
     return words_in_res
- 
-# Create your views here.
-# ? Test POST
-# @api_view(['POST'])
-# def add_to_sess(request):
-#     print('You are adding to the session, supposedly.', request.body)
-#     return Response(status=status.HTTP_201_CREATED)
-
-# # ? TEST GET
-# def test_get(request):
-#     print('You are GETTING')
-#     return HttpResponse('You have gotten some text.')
-
-# # ? TEST GET
-# def get_csrf_token(request):
-#     token = get_token(request)
-#     response = JsonResponse({'csrfToken': token})
-#     print('Getting the valuable token', token)
-#     # response['X-CSRFToken'] = get_token(request)
-#     response.set_cookie('csrftoken', token)
-#     return response
-
-# # ? Test GET/POST the current count
-# @api_view(['GET', 'POST'])
-# def count(request):
-#     # ! GET
-#     if request.method == 'GET':
-#         print('GETTING SESSION:', f'\n\tSession key: {request.session.session_key}', '\n\tUser:', request.user)
-#         return Response(request.session['MyCount'], status=status.HTTP_200_OK)
-#     # ! POST
-#     if request.method == 'POST':
-#         print('REQUEST.DATA:', request.data, 'user:', request.user)
-#         print('POSTING SESSION:', request.session)
-#         request.session['MyCount'] = request.data
-#         print(request.session['MyCount'], request.session.keys())
-#         return Response(status=status.HTTP_201_CREATED)
