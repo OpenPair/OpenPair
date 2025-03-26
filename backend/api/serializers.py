@@ -19,18 +19,18 @@ class TextSerializer(serializers.Serializer):
     annotations = serializers.ListField(child=serializers.CharField(), required=False)
 
 class ContentSerializer(serializers.Serializer):
-    type = serializers.CharField()
+    # type = serializers.CharField()
     text = TextSerializer()
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.CharField()
-    object = serializers.CharField()
+    # object = serializers.CharField()
     created_at = serializers.IntegerField()
-    assistant_id = serializers.CharField()
-    thread_id = serializers.CharField()
-    run_id = serializers.CharField()
+    # assistant_id = serializers.CharField()
+    # thread_id = serializers.CharField()
+    # run_id = serializers.CharField()
     role = serializers.CharField()
     content = ContentSerializer(many=True)
-    attachments = serializers.ListField(required=False)
-    metadata = serializers.DictField(required=False)
+    # attachments = serializers.ListField(required=False)
+    # metadata = serializers.DictField(required=False)
     vocab = VocabSerializer(many=True, required=False)

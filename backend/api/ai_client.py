@@ -42,51 +42,51 @@ def run(thread_id, assistant_id, user_message):
     print(f"Error in Langchain processing: {e}")
     raise
 
-def rerun(thread_id, assistant_id, message_id, regen_message):
-  # delete the message from the thread, and have it return a new message that is restated.
-  #// 1 Delete message
-  #// 2 Create a new message asking for a rephrased response
-  #// 3 Create a run with new instructions of the assistant
-  #// 4 Delete the user's message that we crafted
-  #// 5 Return list of messages
+# def rerun(thread_id, assistant_id, message_id, regen_message):
+#   # delete the message from the thread, and have it return a new message that is restated.
+#   #// 1 Delete message
+#   #// 2 Create a new message asking for a rephrased response
+#   #// 3 Create a run with new instructions of the assistant
+#   #// 4 Delete the user's message that we crafted
+#   #// 5 Return list of messages
 
-  deleted = client.beta.threads.messages.delete(
-      thread_id=thread_id,
-      message_id=message_id,
-    )
+#   deleted = client.beta.threads.messages.delete(
+#       thread_id=thread_id,
+#       message_id=message_id,
+#     )
 
-  prompt = f"Please rephrase this response using simpler language and analogies: {regen_message}"
-  message = client.beta.threads.messages.create(
-    thread_id=thread_id,
-    role='user',
-    content=prompt,
-  )
+#   prompt = f"Please rephrase this response using simpler language and analogies: {regen_message}"
+#   message = client.beta.threads.messages.create(
+#     thread_id=thread_id,
+#     role='user',
+#     content=prompt,
+#   )
 
-  run = client.beta.threads.runs.create_and_poll(
-    thread_id=thread_id,
-    assistant_id=assistant_id,
-    instructions='You are to simplify coding and development topics so it is understandable to beginners.'
-  )
+#   run = client.beta.threads.runs.create_and_poll(
+#     thread_id=thread_id,
+#     assistant_id=assistant_id,
+#     instructions='You are to simplify coding and development topics so it is understandable to beginners.'
+#   )
 
-  if run.status == 'completed': 
-    client.beta.threads.messages.delete(
-      message_id=message.id,
-      thread_id=thread_id,
-    )
+#   if run.status == 'completed': 
+#     client.beta.threads.messages.delete(
+#       message_id=message.id,
+#       thread_id=thread_id,
+#     )
 
-    messages = client.beta.threads.messages.list(
-    thread_id=thread_id
-    )
+#     messages = client.beta.threads.messages.list(
+#     thread_id=thread_id
+#     )
 
-    return messages
-  else:
-    print(run.status)
+#     return messages
+#   else:
+#     print(run.status)
 
-def get_conversation(thread_id):
-  messages = client.beta.threads.messages.list(
-    thread_id=thread_id
-  )
-  return messages
+# def get_conversation(thread_id):
+#   messages = client.beta.threads.messages.list(
+#     thread_id=thread_id
+#   )
+#   return messages
 
 
 # ! A function to comprehend the data from AI assistant better. 

@@ -18,33 +18,32 @@ Response: 200, with list of entire conversation.
 @api_view(['GET', 'POST'])
 def query_openai(request):
     print(f"request.data: {request.data}")
-    if 'thread_id' not in request.session:  # If the thread_id does not exist in a current session:
-        created_assistant = ai_client.create_asst_thrd()  # creates a new assistant and thread
-        request.session['thread_id'] = created_assistant["thread"].id  # Creates new session key for thread_id and assistant_id
-        request.session['assistant_id'] = created_assistant['assistant'].id
-        thread_id = request.session['thread_id']
-        assistant_id = request.session['assistant_id']
-        messages = ai_client.run(  # Creates a run with the first message.
-            thread_id=thread_id, 
-            assistant_id=assistant_id,
+    
+    try:
+        # We no longer need thread_id and assistant_id, but keeping them as None
+        # to maintain the function signature
+        messages = ai_client.run(
+            thread_id=None,
+            assistant_id=None,
             user_message=request.data['message']
         )
-        serialized_messages = MessageSerializer(messages, many=True) # Serializers translate into a json object
-        return Response(serialized_messages.data, status=status.HTTP_200_OK)
-    else:
-        # print(f"This is the thread_id: {request.session['thread_id']} \nThis is the message: {request.data['message']}")
-        thread_id = request.session['thread_id']
-        assistant_id = request.session['assistant_id']
-        messages = ai_client.run(
-            thread_id=thread_id, 
-            assistant_id=assistant_id,
-            user_message=request.data['message']
-            )
+        
         for message in messages:
-            message.vocab = extract_vocab(message.content[0].text.value)
+            message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
+            
         serialized_messages = MessageSerializer(messages, many=True)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
-    
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        return Response(
+            {"error": "An error occurred processing your request"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+# You can remove these endpoints since we're not using them anymore:
+# - regenerate_response
+# - get_all_messages 
 @api_view(["GET"])
 def get_all_messages(request):
     if 'thread_id' not in request.session:
