@@ -1,47 +1,29 @@
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from openai import OpenAI, AssistantEventHandler
 from typing_extensions import override
 from dotenv import load_dotenv
 from os import getenv
 import pprint
+import time
 
 load_dotenv()
 
-
-# ! Sets up the AI Client with the correct keys.
-api_key = getenv('OPENAI_API_KEY')
-organization = getenv('ORGANIZATION')
-project = getenv('PROJECT')
-
-client = OpenAI(
-  api_key = api_key,
-  organization = organization,
-  project = project,
+model = ChatOpenAI(
+  api_key=getenv('OPENAI_API_KEY'),
+  model="gpt-3.5-turbo"  
 )
 
-"""
-! Creates the AI assistant with its applicable settings, 
-! as well as the thread. Returns the created assistant and thread, 
-! both with id properties.
-! Args: instructions -- str, instructions for the assistant. Defaults to coding tutor.
-"""
-def create_asst_thrd(
-    instructions = 'You are tutor that simplifies coding documentation for beginning software developers'
-    ):
-  assistant = client.beta.assistants.create(
-      name = 'Tech Documentation Simplifier',
-      instructions= instructions,
-      model='gpt-3.5-turbo',
-      tools=[{'type': 'file_search'}],
-  )
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "you are a tutor that simplifies coding documentation for beginning software developers"),
+  ("user", "{message}")
 
-  thread = client.beta.threads.create()
+])
 
-  return {"assistant": assistant, "thread": thread}
+chain = prompt | model | StrOutputParser()
 
-"""
-! Takes the current thread_id, assistant_id, and whatever message user has typed,
-! appends it to the conversation, and returns the whole conversation.
-"""
+
 def run(thread_id, assistant_id, user_message):
   # Creates the message that gets appended to the conversation.
   message = client.beta.threads.messages.create(
