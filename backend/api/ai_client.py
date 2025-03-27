@@ -48,7 +48,7 @@ def format_message_for_storage(message, role):
         'created_at': int(time.time())
     }
 
-def get_or_create_workflow(session_id: str):
+def get_or_create_workflow(session_id: str): # Do I need to create new or different workflows?
     """Get existing workflow or create a new one for the session"""
     if session_id not in session_workflows:
         workflow = StateGraph(state_schema=MessagesState)
@@ -63,7 +63,10 @@ def get_or_create_workflow(session_id: str):
         workflow.set_finish_point("model")
 
         # Initialize memory
-        memory = MemorySaver()
+        memory = MemorySaver(
+            thread_id=session_id,
+            checkpoint_id="chat_checkpoint"
+        )
         session_workflows[session_id] = workflow.compile(checkpointer=memory)
         session_messages[session_id] = []
 
