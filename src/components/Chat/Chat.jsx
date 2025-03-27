@@ -4,6 +4,7 @@ import '.././styles/main.scss';
 import api from '../../hooks/api'
 
 function Chat() {
+  // console.log()
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

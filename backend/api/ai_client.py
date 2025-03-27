@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from os import getenv
 import pprint
 import time
+import uuid
 
 load_dotenv()
 
@@ -20,8 +21,7 @@ model = ChatOpenAI(
 
 SYSTEM_PROMPT = "you are a tutor that simplifies coding documentation for beginning software developers"
 
-session_workflows = {}
-session_messages = {}  # Store messages for each session
+session_raw_messages = {}  # Store messages for each session
 
 def call_model(state: MessagesState):
     """Process the current state and generate a response"""
@@ -48,77 +48,83 @@ def format_message_for_storage(message, role):
         'created_at': int(time.time())
     }
 
-def get_or_create_workflow(session_id: str): # Do I need to create new or different workflows?
-    """Get existing workflow or create a new one for the session"""
-    if session_id not in session_workflows:
-        workflow = StateGraph(state_schema=MessagesState)
+def get_chat_history(thread_id):
+    return session_raw_messages.get(thread_id, [])
+
+def get_or_create_session(thread_id):
+    if thread_id not in session_raw_messages:
+        session_raw_messages[thread_id] = [SystemMessage(content=SYSTEM_PROMPT)]
+
+def get_or_create_chat_session(request):
+    if not request.session.session_key:
+        request.session.create()
+
+    if "chat_history" not in request.session:
+        request.session["chat_history"] = []
+    return request.session.session_key
+
+def add_to_chat_history(request, role, content):
+    history = request.session.get("chat_history", [])
+    history.append({
+        "id": str(uuid.uuid4()),
+        "role": role,
+        "content": [{"text": {"value": content}}],
+        "created_at": int(time.time())
+    })
+    request.session["chat_history"] = history
+    request.session.modified = True
+
+# def get_or_create_workflow(session_id: str): # Do I need to create new or different workflows?
+#     """Get existing workflow or create a new one for the session"""
+#     if session_id not in session_workflows:
+#         workflow = StateGraph(state_schema=MessagesState)
         
-        # Add nodes
-        workflow.add_node("start", lambda x: x)
-        workflow.add_node("model", call_model)
+#         # Add nodes
+#         workflow.add_node("start", lambda x: x)
+#         workflow.add_node("model", call_model)
         
-        # Add edges
-        workflow.set_entry_point("start")
-        workflow.add_edge('start', 'model')
-        workflow.set_finish_point("model")
+#         # Add edges
+#         workflow.set_entry_point("start")
+#         workflow.add_edge('start', 'model')
+#         workflow.set_finish_point("model")
 
-        # Initialize memory
-        memory = MemorySaver(
-            thread_id=session_id,
-            checkpoint_id="chat_checkpoint"
-        )
-        session_workflows[session_id] = workflow.compile(checkpointer=memory)
-        session_messages[session_id] = []
+#         # Initialize memory
+#         memory = MemorySaver(
+#             thread_id=session_id,
+#             checkpoint_id="chat_checkpoint"
+#         )
+#         session_workflows[session_id] = workflow.compile(checkpointer=memory)
+#         session_messages[session_id] = []
 
-    return session_workflows[session_id]
+#     return session_workflows[session_id]
 
-def run(thread_id, assistant_id, user_message):
-    """Process a user message and return the response"""
+def run(thread_id, user_message, request):
     try:
-        # Get or create workflow
-        workflow = get_or_create_workflow(thread_id)
-        
-        # Create the user message
-        user_msg = HumanMessage(content=user_message)
-        
-        # Get current state or create new one
-        current_messages = session_messages.get(thread_id, [])
-        
-        # Run the workflow
-        result = workflow.invoke({
-            "messages": current_messages + [user_msg]
-        })
-        
-        # Get the last message (AI's response)
-        ai_response = result["messages"][-1]
-        
-        # Format messages for storage
-        formatted_user_msg = format_message_for_storage(user_msg, 'user')
-        formatted_ai_msg = format_message_for_storage(ai_response, 'assistant')
-        
-        # Update session storage
-        if thread_id not in session_messages:
-            session_messages[thread_id] = []
-        
-        session_messages[thread_id].extend([formatted_user_msg, formatted_ai_msg])
-        
-        # Return just the AI response for immediate display
-        return [formatted_ai_msg]
+        # 🧠 Make sure we have raw message memory
+        get_or_create_session(thread_id)
 
+        # 🗣️ Build new message
+        user_msg = HumanMessage(content=user_message)
+        session_raw_messages[thread_id].append(user_msg)
+
+        # 🤖 Call model
+        model = ChatOpenAI(model="gpt-3.5-turbo")
+        response = model.invoke(session_raw_messages[thread_id])
+        session_raw_messages[thread_id].append(response)
+
+        # 💾 Store messages in session for frontend
+        add_to_chat_history(request, "user", user_msg.content)
+        add_to_chat_history(request, "assistant", response.content)
+
+        return [{
+            "id": str(uuid.uuid4()),
+            "role": "assistant",
+            "content": [{"text": {"value": response.content}}],
+            "created_at": int(time.time())
+        }]
     except Exception as e:
         print(f"Error in Langchain processing: {e}")
         raise
-
-def get_chat_history(thread_id):
-    """Get all messages for a given session"""
-    return session_messages.get(thread_id, [])
-
-def clear_chat_history(thread_id):
-    """Clear the chat history for a given session"""
-    if thread_id in session_messages:
-        session_messages[thread_id] = []
-    if thread_id in session_workflows:
-        del session_workflows[thread_id]  # Remove workflow to start fresh
 
 # def rerun(thread_id, assistant_id, message_id, regen_message):
 #   # delete the message from the thread, and have it return a new message that is restated.

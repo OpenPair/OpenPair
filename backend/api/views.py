@@ -21,17 +21,16 @@ def query_openai(request):
     
     try:
         # Make sure we have a session
-        if not request.session.session_key:
-            request.session.create()
+        thread_id = ai_client.get_or_create_chat_session(request)
             
         messages = ai_client.run(
-            thread_id=request.session.session_key,  # Use session key for memory
-            assistant_id=None,  # Keep for compatibility
-            user_message=request.data['message']
+            thread_id=thread_id,  # Use session key for memory
+            user_message=request.data['message'],
+            request=request
         )
         
         # Get full chat history
-        chat_history = ai_client.get_chat_history(request.session.session_key)
+        chat_history = request.session.get("chat_history", [])
         
         # Add vocab to all messages
         for message in chat_history:
