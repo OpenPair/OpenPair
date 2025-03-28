@@ -27,13 +27,17 @@ def query_openai(request):
         
         # Create user message for response
         current_time = int(time.time())
+        print(f"\n=== Timestamp Debug ===")
+        print(f"Current Unix timestamp: {current_time}")
+        print(f"As readable date: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(current_time))}")
+        
         user_message = {
             "id": str(uuid.uuid4()),
             "role": "user",
-            "content": request.data['message'],  # Simple string content
-            "created_at": current_time,
-            "timestamp": current_time
+            "content": request.data['message'],
+            "created_at": current_time  # Single source of truth for message timing
         }
+        print(f"User message with timestamps: {user_message}")
             
         # Get AI response
         ai_response = ai_client.run(
@@ -44,10 +48,11 @@ def query_openai(request):
         
         # Return just the new messages
         new_messages = [user_message] + ai_response
-        print("Messages before serialization:", new_messages)  # Debug log
-        print("\n")  # Add a newline for separation
+        print("\n=== Message Debug ===")
+        print("Messages before serialization:", new_messages)
+        print("Timestamps in messages:", [(msg["role"], msg["created_at"], time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(msg["created_at"]))) for msg in new_messages])
         serialized_messages = MessageSerializer(new_messages, many=True)
-        print("Serialized messages:", serialized_messages.data)  # Debug log
+        print("Serialized messages:", serialized_messages.data)
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
         
     except Exception as e:

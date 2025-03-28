@@ -31,7 +31,6 @@ class ContentSerializer(serializers.Serializer):
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.CharField()
-    created_at = serializers.IntegerField()
     role = serializers.CharField()
-    content = serializers.CharField()  # Simple string content
-    timestamp = serializers.IntegerField(required=False)
+    content = serializers.CharField()  # Always expect a simple string content
+    created_at = serializers.IntegerField()  # Unix timestamp for message creation time

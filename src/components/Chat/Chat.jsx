@@ -83,7 +83,14 @@ function Chat() {
         message: input.trim(),
       });
 
-      console.log('Full API response: ', response.data);
+      console.log('=== Frontend Timestamp Debug ===');
+      console.log('API Response:', response.data);
+      console.log('Response timestamps:', response.data.map(msg => ({
+        role: msg.role,
+        unix_timestamp: msg.created_at,
+        js_date: new Date(msg.created_at * 1000),
+        readable: new Date(msg.created_at * 1000).toLocaleString()
+      })));
 
       if (!Array.isArray(response.data)) {
         throw new Error('Invalid response format');
@@ -91,14 +98,21 @@ function Chat() {
 
       // Add new messages to existing messages
       setMessages(prevMessages => {
-        // Convert timestamps in the new messages to Date objects
-        const formattedNewMessages = response.data.map(msg => ({
-          ...msg,
-          timestamp: new Date(msg.created_at * 1000) // Convert Unix timestamp to Date
-        }));
+        // Convert Unix timestamps to JavaScript Date objects
+        const formattedNewMessages = response.data.map(msg => {
+          const jsDate = new Date(msg.created_at * 1000);
+          console.log(`Converting message timestamp:`, {
+            role: msg.role,
+            unix_timestamp: msg.created_at,
+            as_date: jsDate.toLocaleString()
+          });
+          return {
+            ...msg,
+            displayTime: jsDate  // More descriptive name for the frontend Date object
+          };
+        });
         
         const newMessages = [...prevMessages, ...formattedNewMessages];
-        // Update localStorage with complete history
         localStorage.setItem("chat_history", JSON.stringify(newMessages));
         return newMessages;
       });
@@ -134,7 +148,15 @@ function Chat() {
   const shouldShowTimestamp = (currentMsg, prevMsg) => {
     if (!prevMsg) return true;
     
-    const timeDiff = currentMsg.timestamp - prevMsg.timestamp;
+    if (!(currentMsg.displayTime instanceof Date)) {
+      console.warn('Invalid display time for message:', {
+        role: currentMsg.role,
+        displayTime: currentMsg.displayTime
+      });
+      return true;
+    }
+    
+    const timeDiff = currentMsg.displayTime - prevMsg.displayTime;
     const fiveMinutes = 5 * 60 * 1000;
     return timeDiff > fiveMinutes || currentMsg.role !== prevMsg.role;
   };
@@ -233,10 +255,10 @@ function Chat() {
                     </div>
                     {showTimestamp && (
                       <span className="message__time">
-                        {message.timestamp.toLocaleDateString([], {
+                        {message.displayTime.toLocaleDateString([], {
                           month: 'numeric',
                           day: 'numeric'
-                        })} {message.timestamp.toLocaleTimeString([], { 
+                        })} {message.displayTime.toLocaleTimeString([], { 
                           hour: '2-digit', 
                           minute: '2-digit'
                         })}
