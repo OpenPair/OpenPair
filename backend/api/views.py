@@ -45,6 +45,7 @@ def query_openai(request):
         # Return just the new messages
         new_messages = [user_message] + ai_response
         print("Messages before serialization:", new_messages)  # Debug log
+        print("\n")  # Add a newline for separation
         serialized_messages = MessageSerializer(new_messages, many=True)
         print("Serialized messages:", serialized_messages.data)  # Debug log
         return Response(serialized_messages.data, status=status.HTTP_200_OK)

@@ -19,6 +19,7 @@ class TextSerializer(serializers.Serializer):
     annotations = serializers.ListField(child=serializers.CharField(), required=False)
 
 class ContentSerializer(serializers.Serializer):
+    # This definitely makes no sense
     def to_representation(self, instance):
         # If instance is a string, return it directly
         if isinstance(instance, str):

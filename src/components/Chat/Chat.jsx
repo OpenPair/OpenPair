@@ -166,7 +166,7 @@ function Chat() {
             className="header__clear-button"
             title="Clear chat history"
           >
-            <RefreshCw size={20} />
+            Clear Chat
           </button>
         </div>
       </header>
