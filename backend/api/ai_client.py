@@ -65,7 +65,6 @@ def run(thread_id, user_message, request):
             "id": str(uuid.uuid4()),
             "role": "assistant",
             "content": response.content,  # Send plain text content
-            "created_at": current_time,
             "timestamp": current_time
         }]
         
@@ -81,7 +80,6 @@ def format_message_for_storage(message, role):
         'id': str(uuid.uuid4()),
         'role': role,
         'content': message.content if hasattr(message, 'content') else str(message),
-        'created_at': current_time,
         'timestamp': current_time
     }
 

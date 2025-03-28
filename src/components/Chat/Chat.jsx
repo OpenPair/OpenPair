@@ -87,9 +87,9 @@ function Chat() {
       console.log('API Response:', response.data);
       console.log('Response timestamps:', response.data.map(msg => ({
         role: msg.role,
-        unix_timestamp: msg.created_at,
-        js_date: new Date(msg.created_at * 1000),
-        readable: new Date(msg.created_at * 1000).toLocaleString()
+        unix_timestamp: msg.timestamp,
+        js_date: new Date(msg.timestamp * 1000),
+        readable: new Date(msg.timestamp * 1000).toLocaleString()
       })));
 
       if (!Array.isArray(response.data)) {
@@ -100,15 +100,15 @@ function Chat() {
       setMessages(prevMessages => {
         // Convert Unix timestamps to JavaScript Date objects
         const formattedNewMessages = response.data.map(msg => {
-          const jsDate = new Date(msg.created_at * 1000);
+          const jsDate = new Date(msg.timestamp * 1000);
           console.log(`Converting message timestamp:`, {
             role: msg.role,
-            unix_timestamp: msg.created_at,
+            unix_timestamp: msg.timestamp,
             as_date: jsDate.toLocaleString()
           });
           return {
             ...msg,
-            displayTime: jsDate  // More descriptive name for the frontend Date object
+            timestamp: jsDate  // Convert Unix timestamp to Date object
           };
         });
         
@@ -148,15 +148,15 @@ function Chat() {
   const shouldShowTimestamp = (currentMsg, prevMsg) => {
     if (!prevMsg) return true;
     
-    if (!(currentMsg.displayTime instanceof Date)) {
-      console.warn('Invalid display time for message:', {
+    if (!(currentMsg.timestamp instanceof Date)) {
+      console.warn('Invalid timestamp for message:', {
         role: currentMsg.role,
-        displayTime: currentMsg.displayTime
+        timestamp: currentMsg.timestamp
       });
       return true;
     }
     
-    const timeDiff = currentMsg.displayTime - prevMsg.displayTime;
+    const timeDiff = currentMsg.timestamp - prevMsg.timestamp;
     const fiveMinutes = 5 * 60 * 1000;
     return timeDiff > fiveMinutes || currentMsg.role !== prevMsg.role;
   };
@@ -255,10 +255,10 @@ function Chat() {
                     </div>
                     {showTimestamp && (
                       <span className="message__time">
-                        {message.displayTime.toLocaleDateString([], {
+                        {message.timestamp.toLocaleDateString([], {
                           month: 'numeric',
                           day: 'numeric'
-                        })} {message.displayTime.toLocaleTimeString([], { 
+                        })} {message.timestamp.toLocaleTimeString([], { 
                           hour: '2-digit', 
                           minute: '2-digit'
                         })}
