@@ -76,7 +76,6 @@ function Chat() {
       timestamp: new Date(),
     };
 
-    setInput('');  // Clear input right away
     setIsLoading(true);
     
     try {
@@ -122,6 +121,7 @@ function Chat() {
         return newMessages;
       });
     } finally {
+    setInput('');  // Clear input right away
       setIsLoading(false);
     }
   }
