@@ -18,7 +18,7 @@ function Chat() {
   const fetchChatHistory = async () => {
     try {
       const response = await api.get('/api/chat-history/');
-      console.log('response: ', response)
+      console.log('chat history response: ', response)
       
       if (!Array.isArray(response.data)) {
         console.error('Expected array response, got:', typeof response.data);

@@ -8,10 +8,10 @@ class CurrentCountSerializer(serializers.ModelSerializer):
         fields = ['id', 'current_count', 'author']
         extra_kwargs = {'author': {'read_only': True}}
 
-class VocabSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vocab
-        fields = ['id', 'word', 'definition']
+# class VocabSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Vocab
+#         fields = ['id', 'word', 'definition']
 
 # ? Attempting to serialize the OpenAi response object
 class TextSerializer(serializers.Serializer):
@@ -33,4 +33,4 @@ class MessageSerializer(serializers.Serializer):
     content = ContentSerializer(many=True)
     # attachments = serializers.ListField(required=False)
     # metadata = serializers.DictField(required=False)
-    vocab = VocabSerializer(many=True, required=False)
+    # vocab = VocabSerializer(many=True, required=False)
