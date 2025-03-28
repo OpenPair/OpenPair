@@ -20,6 +20,7 @@ model = ChatOpenAI(
 )
 
 SYSTEM_PROMPT = "you are a tutor that simplifies coding documentation for beginning software developers"
+MAX_MESSAGES = 10  # or based on token estimation
 
 session_raw_messages = {}  # Store messages for each session
 
@@ -48,8 +49,8 @@ def format_message_for_storage(message, role):
         'created_at': int(time.time())
     }
 
-def get_chat_history(thread_id):
-    return session_raw_messages.get(thread_id, [])
+# def get_chat_history(thread_id):
+#     return session_raw_messages.get(thread_id, [])
 
 def get_or_create_session(thread_id):
     if thread_id not in session_raw_messages:
@@ -63,16 +64,16 @@ def get_or_create_chat_session(request):
         request.session["chat_history"] = []
     return request.session.session_key
 
-def add_to_chat_history(request, role, content):
-    history = request.session.get("chat_history", [])
-    history.append({
-        "id": str(uuid.uuid4()),
-        "role": role,
-        "content": [{"text": {"value": content}}],
-        "created_at": int(time.time())
-    })
-    request.session["chat_history"] = history
-    request.session.modified = True
+# def add_to_chat_history(request, role, content):
+#     history = request.session.get("chat_history", [])
+#     history.append({
+#         "id": str(uuid.uuid4()),
+#         "role": role,
+#         "content": [{"text": {"value": content}}],
+#         "created_at": int(time.time())
+#     })
+#     request.session["chat_history"] = history
+#     request.session.modified = True
 
 # def get_or_create_workflow(session_id: str): # Do I need to create new or different workflows?
 #     """Get existing workflow or create a new one for the session"""
@@ -107,14 +108,19 @@ def run(thread_id, user_message, request):
         user_msg = HumanMessage(content=user_message)
         session_raw_messages[thread_id].append(user_msg)
 
-        # 🤖 Call model
-        model = ChatOpenAI(model="gpt-3.5-turbo")
-        response = model.invoke(session_raw_messages[thread_id])
+        context_messages = session_raw_messages[thread_id][-MAX_MESSAGES:]
+
+        response = model.invoke(context_messages)
         session_raw_messages[thread_id].append(response)
 
-        # 💾 Store messages in session for frontend
-        add_to_chat_history(request, "user", user_msg.content)
-        add_to_chat_history(request, "assistant", response.content)
+        # 🤖 Call model
+        # model = ChatOpenAI(model="gpt-3.5-turbo")
+        # response = model.invoke(session_raw_messages[thread_id])
+        # # session_raw_messages[thread_id].append(response)
+
+        # # 💾 Store messages in session for frontend
+        # add_to_chat_history(request, "user", user_msg.content)
+        # add_to_chat_history(request, "assistant", response.content)
 
         return [{
             "id": str(uuid.uuid4()),

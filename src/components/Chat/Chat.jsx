@@ -44,7 +44,21 @@ function Chat() {
   };
 
   useEffect(() => {
-    fetchChatHistory();
+    const stored = localStorage.getItem("chat_history");
+    if(stored){
+      try {
+        const parsed = JSON.parse(stored);
+        const messagesWithDates = parsed.map(msg => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+        setMessages(messagesWithDates);
+        setIsFetching(false);
+      } catch(err) {
+        console.error("Failed to parse local chat: ", err);
+      }
+    }
+    setIsFetching(false);
   }, []);
 
   useEffect(() => {
@@ -62,7 +76,14 @@ function Chat() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => {
+      const newMessages = [...prev, userMessage];
+
+      // save to localStorage
+      localStorage.setItem("chat_history", JSON.stringify(newMessages));
+
+      return newMessages
+    });
     setInput('');
     setIsLoading(true);
     
@@ -102,12 +123,8 @@ function Chat() {
   }
 
   const handleClearChat = async () => {
-    try {
-      await api.post('/api/clear-chat/');
-      setMessages([]);
-    } catch (error) {
-      console.error('Error clearing chat:', error);
-    }
+    setMessages([]);
+    localStorage.removeItem("chat_history");
   };
 
   const shouldShowTimestamp = (currentMsg, prevMsg) => {
@@ -205,7 +222,10 @@ function Chat() {
                     </div>
                     {showTimestamp && (
                       <span className="message__time">
-                        {message.timestamp.toLocaleTimeString([], { 
+                        {message.timestamp.toLocaleDateString([], {
+                          month: 'numeric',
+                          day: 'numeric'
+                        })} {message.timestamp.toLocaleTimeString([], { 
                           hour: '2-digit', 
                           minute: '2-digit'
                         })}

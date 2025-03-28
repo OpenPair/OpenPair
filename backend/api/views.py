@@ -51,30 +51,30 @@ def query_openai(request):
 Route: 'api/chat-history/'
 Response: 200, with list of all messages in the current session.
 """
-@api_view(['GET'])
-def get_chat_history(request):
-    """Get the chat history for the current session"""
-    if not request.session.session_key:
-        return Response([], status=status.HTTP_200_OK)
+# @api_view(['GET'])
+# def get_chat_history(request):
+#     """Get the chat history for the current session"""
+#     if not request.session.session_key:
+#         return Response([], status=status.HTTP_200_OK)
         
-    chat_history = ai_client.get_chat_history(request.session.session_key)
+#     chat_history = ai_client.get_chat_history(request.session.session_key)
     
-    # Add vocab to all messages
-    # for message in chat_history:
-    #     if 'vocab' not in message:
-    #         message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
+#     # Add vocab to all messages
+#     # for message in chat_history:
+#     #     if 'vocab' not in message:
+#     #         message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
             
-    serialized_messages = MessageSerializer(chat_history, many=True)
-    return Response(serialized_messages.data, status=status.HTTP_200_OK)
+#     serialized_messages = MessageSerializer(chat_history, many=True)
+#     return Response(serialized_messages.data, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
-def clear_chat(request):
-    """Clear the chat history for the current session"""
-    if not request.session.session_key:
-        request.session.create()
+# @api_view(['POST'])
+# def clear_chat(request):
+#     """Clear the chat history for the current session"""
+#     if not request.session.session_key:
+#         request.session.create()
     
-    ai_client.clear_chat_history(request.session.session_key)
-    return Response(status=status.HTTP_200_OK)
+#     ai_client.clear_chat_history(request.session.session_key)
+#     return Response(status=status.HTTP_200_OK)
 
 """
 Route: 'api/definition/:word/' expects a string that is the word being looked up. Case-insensitive
