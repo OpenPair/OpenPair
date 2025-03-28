@@ -76,9 +76,7 @@ function Chat() {
       timestamp: new Date(),
     };
 
-    // Add user message immediately
-    setMessages(prevMessages => [...prevMessages, userMessage]);
-    setInput('');  // Clear input right after showing the message
+    setInput('');  // Clear input right away
     setIsLoading(true);
     
     try {
