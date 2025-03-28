@@ -19,18 +19,18 @@ class TextSerializer(serializers.Serializer):
     annotations = serializers.ListField(child=serializers.CharField(), required=False)
 
 class ContentSerializer(serializers.Serializer):
-    # type = serializers.CharField()
-    text = TextSerializer()
+    def to_representation(self, instance):
+        # If instance is a string, return it directly
+        if isinstance(instance, str):
+            return instance
+        # Otherwise, handle the nested structure
+        return super().to_representation(instance)
+    
+    text = TextSerializer(required=False)  # Make text field optional
 
 class MessageSerializer(serializers.Serializer):
     id = serializers.CharField()
-    # object = serializers.CharField()
     created_at = serializers.IntegerField()
-    # assistant_id = serializers.CharField()
-    # thread_id = serializers.CharField()
-    # run_id = serializers.CharField()
     role = serializers.CharField()
-    content = ContentSerializer(many=True)
-    # attachments = serializers.ListField(required=False)
-    # metadata = serializers.DictField(required=False)
-    # vocab = VocabSerializer(many=True, required=False)
+    content = serializers.CharField()  # Simple string content
+    timestamp = serializers.IntegerField(required=False)

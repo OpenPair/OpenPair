@@ -20,49 +20,73 @@ model = ChatOpenAI(
 )
 
 SYSTEM_PROMPT = "you are a tutor that simplifies coding documentation for beginning software developers"
-MAX_MESSAGES = 10  # or based on token estimation
+MAX_MESSAGES = 10  # Keep last 10 messages for context
 
-session_raw_messages = {}  # Store messages for each session
+# Store messages for each session
+session_raw_messages = {}
 
-def call_model(state: MessagesState):
-    """Process the current state and generate a response"""
-    # Get all messages from the state
-    messages = state["messages"]
-    
-    # Always include system message first
-    all_messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
-    
-    # Get response from the model
-    response = model.invoke(all_messages)
-    
-    # Update the state with the new message
-    state["messages"].append(response)
-    
-    return state
+def get_or_create_session(thread_id):
+    """Initialize or get a session's message history"""
+    if thread_id not in session_raw_messages:
+        session_raw_messages[thread_id] = [SystemMessage(content=SYSTEM_PROMPT)]
+    return session_raw_messages[thread_id]
 
+def get_or_create_chat_session(request):
+    """Ensure we have a session key"""
+    if not request.session.session_key:
+        request.session.create()
+    return request.session.session_key
+
+def run(thread_id, user_message, request):
+    try:
+        # Get session messages
+        messages = get_or_create_session(thread_id)
+        
+        # Add user message to context
+        user_msg = HumanMessage(content=user_message)
+        messages.append(user_msg)
+        
+        # Keep only the system message and last MAX_MESSAGES messages
+        if len(messages) > MAX_MESSAGES + 1:  # +1 for system message
+            messages = [messages[0]] + messages[-(MAX_MESSAGES):]
+        
+        # Update session messages
+        session_raw_messages[thread_id] = messages
+        
+        # Get AI response
+        response = model.invoke(messages)
+        
+        # Add AI response to context
+        messages.append(response)
+        
+        # Format response for frontend
+        current_time = int(time.time())
+        return [{
+            "id": str(uuid.uuid4()),
+            "role": "assistant",
+            "content": response.content,  # Send plain text content
+            "created_at": current_time,
+            "timestamp": current_time
+        }]
+        
+    except Exception as e:
+        print(f"Error in Langchain processing: {e}")
+        raise
+
+# Clean up unused functions and keep only what we need
 def format_message_for_storage(message, role):
     """Format a message for storage and API response"""
+    current_time = int(time.time())
     return {
-        'id': str(hash(str(message))),
+        'id': str(uuid.uuid4()),
         'role': role,
-        'content': [{'text': {'value': message.content if hasattr(message, 'content') else str(message)}}],
-        'created_at': int(time.time())
+        'content': message.content if hasattr(message, 'content') else str(message),
+        'created_at': current_time,
+        'timestamp': current_time
     }
 
 # def get_chat_history(thread_id):
 #     return session_raw_messages.get(thread_id, [])
-
-def get_or_create_session(thread_id):
-    if thread_id not in session_raw_messages:
-        session_raw_messages[thread_id] = [SystemMessage(content=SYSTEM_PROMPT)]
-
-def get_or_create_chat_session(request):
-    if not request.session.session_key:
-        request.session.create()
-
-    if "chat_history" not in request.session:
-        request.session["chat_history"] = []
-    return request.session.session_key
 
 # def add_to_chat_history(request, role, content):
 #     history = request.session.get("chat_history", [])
@@ -98,39 +122,6 @@ def get_or_create_chat_session(request):
 #         session_messages[session_id] = []
 
 #     return session_workflows[session_id]
-
-def run(thread_id, user_message, request):
-    try:
-        # 🧠 Make sure we have raw message memory
-        get_or_create_session(thread_id)
-
-        # 🗣️ Build new message
-        user_msg = HumanMessage(content=user_message)
-        session_raw_messages[thread_id].append(user_msg)
-
-        context_messages = session_raw_messages[thread_id][-MAX_MESSAGES:]
-
-        response = model.invoke(context_messages)
-        session_raw_messages[thread_id].append(response)
-
-        # 🤖 Call model
-        # model = ChatOpenAI(model="gpt-3.5-turbo")
-        # response = model.invoke(session_raw_messages[thread_id])
-        # # session_raw_messages[thread_id].append(response)
-
-        # # 💾 Store messages in session for frontend
-        # add_to_chat_history(request, "user", user_msg.content)
-        # add_to_chat_history(request, "assistant", response.content)
-
-        return [{
-            "id": str(uuid.uuid4()),
-            "role": "assistant",
-            "content": [{"text": {"value": response.content}}],
-            "created_at": int(time.time())
-        }]
-    except Exception as e:
-        print(f"Error in Langchain processing: {e}")
-        raise
 
 # def rerun(thread_id, assistant_id, message_id, regen_message):
 #   # delete the message from the thread, and have it return a new message that is restated.

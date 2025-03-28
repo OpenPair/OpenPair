@@ -6,6 +6,8 @@ from . import ai_client
 # from .models import Vocab
 # from .serializers import VocabSerializer
 from api.serializers import MessageSerializer
+import uuid
+import time
 
 """
 Route: 'api/query-client/'
@@ -22,22 +24,29 @@ def query_openai(request):
     try:
         # Make sure we have a session
         thread_id = ai_client.get_or_create_chat_session(request)
+        
+        # Create user message for response
+        current_time = int(time.time())
+        user_message = {
+            "id": str(uuid.uuid4()),
+            "role": "user",
+            "content": request.data['message'],  # Simple string content
+            "created_at": current_time,
+            "timestamp": current_time
+        }
             
-        messages = ai_client.run(
-            thread_id=thread_id,  # Use session key for memory
+        # Get AI response
+        ai_response = ai_client.run(
+            thread_id=thread_id,
             user_message=request.data['message'],
             request=request
         )
         
-        # Get full chat history
-        chat_history = request.session.get("chat_history", [])
-        
-        # Add vocab to all messages
-        # for message in chat_history:
-        #     if 'vocab' not in message:  # Only process if vocab hasn't been added yet
-        #         message['vocab'] = extract_vocab(message['content'][0]['text']['value'])
-            
-        serialized_messages = MessageSerializer(chat_history, many=True)
+        # Return just the new messages
+        new_messages = [user_message] + ai_response
+        print("Messages before serialization:", new_messages)  # Debug log
+        serialized_messages = MessageSerializer(new_messages, many=True)
+        print("Serialized messages:", serialized_messages.data)  # Debug log
         return Response(serialized_messages.data, status=status.HTTP_200_OK)
         
     except Exception as e:

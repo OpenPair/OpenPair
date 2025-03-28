@@ -15,33 +15,33 @@ function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const fetchChatHistory = async () => {
-    try {
-      const response = await api.get('/api/chat-history/');
-      console.log('chat history response: ', response)
+  // const fetchChatHistory = async () => {
+  //   try {
+  //     const response = await api.get('/api/chat-history/');
+  //     console.log('chat history response: ', response)
       
-      if (!Array.isArray(response.data)) {
-        console.error('Expected array response, got:', typeof response.data);
-        return;
-      }
+  //     if (!Array.isArray(response.data)) {
+  //       console.error('Expected array response, got:', typeof response.data);
+  //       return;
+  //     }
 
-      const formattedMessages = response.data
-        .sort((a, b) => a.created_at - b.created_at)
-        .map(msg => ({
-          id: msg.id,
-          content: msg.content[0].text.value,
-          role: msg.role,
-          timestamp: new Date(msg.created_at * 1000),
-          vocab: msg.vocab || []
-        }));
+  //     const formattedMessages = response.data
+  //       .sort((a, b) => a.created_at - b.created_at)
+  //       .map(msg => ({
+  //         id: msg.id,
+  //         content: msg.content[0].text.value,
+  //         role: msg.role,
+  //         timestamp: new Date(msg.created_at * 1000),
+  //         vocab: msg.vocab || []
+  //       }));
 
-      setMessages(formattedMessages);
-    } catch (error) {
-      console.error('Error fetching chat history:', error);
-    } finally {
-      setIsFetching(false);
-    }
-  };
+  //     setMessages(formattedMessages);
+  //   } catch (error) {
+  //     console.error('Error fetching chat history:', error);
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
 
   useEffect(() => {
     const stored = localStorage.getItem("chat_history");
@@ -71,20 +71,14 @@ function Chat() {
 
     const userMessage = {
       id: Date.now().toString(),
-      content: input.trim(),
+      content: input.trim(),  // Simple string content for user messages
       role: 'user',
       timestamp: new Date(),
     };
 
-    setMessages(prev => {
-      const newMessages = [...prev, userMessage];
-
-      // save to localStorage
-      localStorage.setItem("chat_history", JSON.stringify(newMessages));
-
-      return newMessages
-    });
-    setInput('');
+    // Add user message immediately
+    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setInput('');  // Clear input right after showing the message
     setIsLoading(true);
     
     try {
@@ -92,31 +86,43 @@ function Chat() {
         message: input.trim(),
       });
 
+      console.log('Full API response: ', response.data);
+
       if (!Array.isArray(response.data)) {
         throw new Error('Invalid response format');
       }
 
-      const formattedMessages = response.data
-        .sort((a, b) => a.created_at - b.created_at)
-        .map(msg => ({
-          id: msg.id,
-          content: msg.content[0].text.value,
-          role: msg.role,
-          timestamp: new Date(msg.created_at * 1000),
-          vocab: msg.vocab || []
+      // Add new messages to existing messages
+      setMessages(prevMessages => {
+        // Convert timestamps in the new messages to Date objects
+        const formattedNewMessages = response.data.map(msg => ({
+          ...msg,
+          timestamp: new Date(msg.created_at * 1000) // Convert Unix timestamp to Date
         }));
-
-      setMessages(formattedMessages);
+        
+        const newMessages = [...prevMessages, ...formattedNewMessages];
+        // Update localStorage with complete history
+        localStorage.setItem("chat_history", JSON.stringify(newMessages));
+        return newMessages;
+      });
       
     } catch (error) {
       console.error('Error:', error);
+      const current_time = Date.now();
       const errorMessage = {
-        id: (Date.now() + 1).toString(),
+        id: current_time.toString(),
         content: "Sorry, there was an error processing your request. Please try again later.",
         role: 'assistant',
-        timestamp: new Date(),
+        created_at: Math.floor(current_time / 1000),  // Convert to Unix timestamp
+        timestamp: Math.floor(current_time / 1000)  // Convert to Unix timestamp
       };
-      setMessages(prev => [...prev, errorMessage]);
+      
+      setMessages(prevMessages => {
+        const newMessages = [...prevMessages, errorMessage];
+        // Update localStorage with complete history
+        localStorage.setItem("chat_history", JSON.stringify(newMessages));
+        return newMessages;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -182,6 +188,11 @@ function Chat() {
             </div>
           ) : (
             messages.map((message, index) => {
+              // Only filter exact welcome messages
+              const welcomePattern = /^hello!?\s+how\s+can\s+i\s+help\s+you\s+today/i;
+              if (welcomePattern.test(message.content)) {
+                return null;
+              }
               const prevMessage = index > 0 ? messages[index - 1] : null;
               const showTimestamp = shouldShowTimestamp(message, prevMessage);
               const isFirstInGroup = !prevMessage || prevMessage.role !== message.role;
@@ -206,7 +217,9 @@ function Chat() {
                   )}
                   <div className={`message__content message__content--${message.role}`}>
                     <div className="message__bubble">
-                      <p className="message__text">{message.content}</p>
+                      <p className="message__text">
+                        {typeof message.content === 'string' ? message.content : JSON.stringify(message.content)}
+                      </p>
                       {message.vocab && message.vocab.length > 0 && (
                         <div className="message__vocab">
                           <h4 className="message__vocab-title">Key Terms:</h4>
