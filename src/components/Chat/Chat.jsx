@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
 import '.././styles/main.scss';
 import api from '../../hooks/api'
 
 function Chat() {
-  // console.log()
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -14,34 +13,6 @@ function Chat() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  // const fetchChatHistory = async () => {
-  //   try {
-  //     const response = await api.get('/api/chat-history/');
-  //     console.log('chat history response: ', response)
-      
-  //     if (!Array.isArray(response.data)) {
-  //       console.error('Expected array response, got:', typeof response.data);
-  //       return;
-  //     }
-
-  //     const formattedMessages = response.data
-  //       .sort((a, b) => a.created_at - b.created_at)
-  //       .map(msg => ({
-  //         id: msg.id,
-  //         content: msg.content[0].text.value,
-  //         role: msg.role,
-  //         timestamp: new Date(msg.created_at * 1000),
-  //         vocab: msg.vocab || []
-  //       }));
-
-  //     setMessages(formattedMessages);
-  //   } catch (error) {
-  //     console.error('Error fetching chat history:', error);
-  //   } finally {
-  //     setIsFetching(false);
-  //   }
-  // };
 
   useEffect(() => {
     const stored = localStorage.getItem("chat_history");
@@ -71,7 +42,7 @@ function Chat() {
 
     const userMessage = {
       id: Date.now().toString(),
-      content: input.trim(),  // Simple string content for user messages
+      content: input.trim(),
       role: 'user',
       timestamp: new Date(),
     };
@@ -119,23 +90,9 @@ function Chat() {
       
     } catch (error) {
       console.error('Error:', error);
-      const current_time = Date.now();
-      const errorMessage = {
-        id: current_time.toString(),
-        content: "Sorry, there was an error processing your request. Please try again later.",
-        role: 'assistant',
-        created_at: Math.floor(current_time / 1000),  // Convert to Unix timestamp
-        timestamp: Math.floor(current_time / 1000)  // Convert to Unix timestamp
-      };
-      
-      setMessages(prevMessages => {
-        const newMessages = [...prevMessages, errorMessage];
-        // Update localStorage with complete history
-        localStorage.setItem("chat_history", JSON.stringify(newMessages));
-        return newMessages;
-      });
+      // Handle error appropriately - maybe show a user-friendly message
     } finally {
-    setInput('');  // Clear input right away
+      setInput('');  
       setIsLoading(false);
     }
   }
@@ -208,11 +165,6 @@ function Chat() {
             </div>
           ) : (
             messages.map((message, index) => {
-              // Only filter exact welcome messages
-              const welcomePattern = /^hello!?\s+how\s+can\s+i\s+help\s+you\s+today/i;
-              if (welcomePattern.test(message.content)) {
-                return null;
-              }
               const prevMessage = index > 0 ? messages[index - 1] : null;
               const showTimestamp = shouldShowTimestamp(message, prevMessage);
               const isFirstInGroup = !prevMessage || prevMessage.role !== message.role;
@@ -238,20 +190,8 @@ function Chat() {
                   <div className={`message__content message__content--${message.role}`}>
                     <div className="message__bubble">
                       <p className="message__text">
-                        {typeof message.content === 'string' ? message.content : JSON.stringify(message.content)}
+                        {message.content}
                       </p>
-                      {message.vocab && message.vocab.length > 0 && (
-                        <div className="message__vocab">
-                          <h4 className="message__vocab-title">Key Terms:</h4>
-                          <ul className="message__vocab-list">
-                            {message.vocab.map((term) => (
-                              <li key={term.id} className="message__vocab-item">
-                                <strong>{term.word}</strong>: {term.definition}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
                     </div>
                     {showTimestamp && (
                       <span className="message__time">
