@@ -38,27 +38,44 @@ $dark-accent: #4f46e5;
 }
 
 // Base styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $dark-bg-primary;
+  overflow: hidden;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: dark;
   color: $dark-text-primary;
   background-color: $dark-bg-primary;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: $dark-bg-primary;
   color: $dark-text-primary;
+  overflow: hidden;
 }
 
 a {
@@ -121,25 +138,25 @@ button {
 }
 
 // Layout
-.app {
+.chat-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
   background-color: $dark-bg-primary;
+  margin: 0;
+  padding: 0;
+  border: none;
 }
 
 // Header
 .header {
+  flex-shrink: 0;
   background-color: $dark-bg-secondary;
   border-bottom: 1px solid $dark-border;
   padding: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -189,27 +206,40 @@ button {
   }
 }
 
+// Main chat area
+.chat-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background-color: $dark-bg-primary;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 // Messages
 .messages {
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
   background-color: $dark-bg-primary;
+  margin: 0;
+  border: none;
 
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 }
 
+// Message
 .message {
   display: flex;
   gap: 0.75rem;
   margin: 0.25rem 0;
-  opacity: 1;
   padding: 0.5rem;
   background: none;
   border: none;
@@ -225,45 +255,6 @@ button {
       background-color: $dark-accent;
       color: $color-white;
       border-radius: 1.2rem 0.3rem 1.2rem 1.2rem;
-    }
-
-    .message__time {
-      text-align: right;
-      color: $dark-text-secondary;
-    }
-  }
-
-  &--welcome {
-    margin: 2rem 0;
-    
-    .message__content {
-      align-items: center;
-    }
-
-    .message__bubble {
-      background-color: #f3f4f6;
-      border: 1px solid #e5e5e5;
-    }
-  }
-
-  &--group-item {
-    margin-top: 0.125rem;
-    
-    .message__avatar {
-      visibility: hidden;
-    }
-  }
-
-  &--typing {
-    opacity: 0.7;
-
-    .message__bubble--typing {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: $dark-bg-secondary;
-      color: $dark-text-secondary;
-      padding: 0.75rem 1rem;
     }
   }
 
@@ -282,18 +273,6 @@ button {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  &__text {
-    margin: 0;
-    line-height: 1.5;
-    white-space: pre-wrap;
-  }
-
-  &__time {
-    font-size: 0.75rem;
-    color: $dark-text-secondary;
-    margin-top: 0.25rem;
-  }
-
   &__avatar {
     width: 2rem;
     height: 2rem;
@@ -306,47 +285,28 @@ button {
     color: $dark-text-secondary;
   }
 
-  &__vocab {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba($dark-text-secondary, 0.2);
+  &__text {
+    margin: 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
 
-    &-title {
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem 0;
-      color: $dark-text-primary;
-    }
-
-    &-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    &-item {
-      font-size: 0.875rem;
-      margin: 0.25rem 0;
-      line-height: 1.4;
-      color: $dark-text-secondary;
-    }
+  &__time {
+    font-size: 0.75rem;
+    color: $dark-text-secondary;
   }
 }
 
-// Input form
-.input-form {
+// Footer with input form
+.chat-footer {
+  flex-shrink: 0;
   background-color: $dark-bg-secondary;
   border-top: 1px solid $dark-border;
   padding: 1rem;
-  position: sticky;
-  bottom: 0;
+}
 
+.input-form {
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  &__group {
     display: flex;
     gap: 0.75rem;
   }
@@ -359,37 +319,23 @@ button {
     font-size: 1rem;
     background-color: $dark-bg-primary;
     color: $dark-text-primary;
-    transition: all 0.2s;
 
     &:focus {
       outline: none;
       border-color: $dark-accent;
-      box-shadow: 0 0 0 2px rgba($dark-accent, 0.2);
-    }
-
-    &:disabled {
-      background-color: rgba($dark-bg-secondary, 0.5);
-      cursor: not-allowed;
-      color: $dark-text-secondary;
-    }
-
-    &::placeholder {
-      color: $dark-text-secondary;
     }
   }
 
   &__button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     background-color: $dark-accent;
     color: $color-white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover:not(:disabled) {
       background-color: lighten($dark-accent, 5%);
