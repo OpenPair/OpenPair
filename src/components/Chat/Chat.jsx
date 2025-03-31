@@ -130,7 +130,7 @@ function Chat() {
   }
 
   return (
-    <div className="app">
+    <div className="chat-container">
       <header className="header">
         <div className="header__container">
           <div className="header__logo">
@@ -150,85 +150,74 @@ function Chat() {
         </div>
       </header>
 
-      <div className="messages">
-        <div className="messages__container">
-          {messages.length === 0 ? (
-            <div className="message message--welcome">
-              <div className="message__content message__content--assistant">
-                <div className="message__avatar">
-                  <Bot size={24} />
-                </div>
-                <div className="message__bubble">
-                  <p className="message__text">Hello! How can I help you today?</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            messages.map((message, index) => {
-              const prevMessage = index > 0 ? messages[index - 1] : null;
-              const showTimestamp = shouldShowTimestamp(message, prevMessage);
-              const isFirstInGroup = !prevMessage || prevMessage.role !== message.role;
-              
-              return (
-                <div
-                  key={`${message.id}-${index}`}
-                  className={`
-                    message 
-                    ${message.role === 'user' ? 'message--user' : ''} 
-                    ${isFirstInGroup ? 'message--group-start' : 'message--group-item'}
-                  `}
-                >
-                  {isFirstInGroup && (
-                    <div className="message__avatar">
-                      {message.role === 'assistant' ? (
-                        <Bot size={24} />
-                      ) : (
-                        <User size={24} />
-                      )}
-                    </div>
-                  )}
-                  <div className={`message__content message__content--${message.role}`}>
-                    <div className="message__bubble">
-                      <p className="message__text">
-                        {message.content}
-                      </p>
-                    </div>
-                    {showTimestamp && (
-                      <span className="message__time">
-                        {message.timestamp.toLocaleDateString([], {
-                          month: 'numeric',
-                          day: 'numeric'
-                        })} {message.timestamp.toLocaleTimeString([], { 
-                          hour: '2-digit', 
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    )}
+      <main className="chat-main">
+        <div className="messages">
+          <div className="messages__container">
+            {messages.length === 0 ? (
+              <div className="message message--welcome">
+                <div className="message__content message__content--assistant">
+                  <div className="message__avatar">
+                    <Bot size={24} />
+                  </div>
+                  <div className="message__bubble">
+                    <p className="message__text">Hello! How can I help you today?</p>
                   </div>
                 </div>
-              );
-            })
-          )}
-          {isLoading && (
-            <div className="message message--typing">
-              <div className="message__avatar">
-                <Bot size={24} />
               </div>
-              <div className="message__content message__content--assistant">
-                <div className="message__bubble message__bubble--typing">
-                  <Loader2 className="animate-spin" size={16} />
-                  <span>AI is thinking...</span>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            ) : (
+              messages.map((message, index) => {
+                const prevMessage = index > 0 ? messages[index - 1] : null;
+                const showTimestamp = shouldShowTimestamp(message, prevMessage);
+                const isFirstInGroup = !prevMessage || prevMessage.role !== message.role;
+                
+                return (
+                  <div
+                    key={`${message.id}-${index}`}
+                    className={`
+                      message 
+                      ${message.role === 'user' ? 'message--user' : ''} 
+                      ${isFirstInGroup ? 'message--group-start' : 'message--group-item'}
+                    `}
+                  >
+                    {isFirstInGroup && (
+                      <div className="message__avatar">
+                        {message.role === 'assistant' ? (
+                          <Bot size={24} />
+                        ) : (
+                          <User size={24} />
+                        )}
+                      </div>
+                    )}
+                    <div className={`message__content message__content--${message.role}`}>
+                      <div className="message__bubble">
+                        <p className="message__text">
+                          {message.content}
+                        </p>
+                      </div>
+                      {showTimestamp && (
+                        <span className="message__time">
+                          {message.timestamp.toLocaleDateString([], {
+                            month: 'numeric',
+                            day: 'numeric'
+                          })} {message.timestamp.toLocaleTimeString([], { 
+                            hour: '2-digit', 
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
-      </div>
+      </main>
 
-      <div className="input-form">
-        <form onSubmit={handleSubmit} className="input-form__container">
-          <div className="input-form__group">
+      <footer className="chat-footer">
+        <form onSubmit={handleSubmit} className="input-form">
+          <div className="input-form__container">
             <input
               type="text"
               value={input}
@@ -237,17 +226,16 @@ function Chat() {
               className="input-form__field"
               disabled={isLoading}
             />
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
+            <button 
+              type="submit" 
               className="input-form__button"
+              disabled={isLoading || !input.trim()}
             >
-              <Send size={20} />
-              <span className="sr-only">Send</span>
+              {isLoading ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}
             </button>
           </div>
         </form>
-      </div>
+      </footer>
     </div>
   );
 }

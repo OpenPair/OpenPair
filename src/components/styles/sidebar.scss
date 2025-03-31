@@ -7,8 +7,8 @@
   background: #343a40;
   color: white;
   padding: 10px;
-  position: relative;
   height: 100vh;
+  border: none;
 
   &.expanded {
     width: 300px;
@@ -34,8 +34,11 @@
 .main-content {
   flex: 1;
   transition: all 0.3s ease;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
   width: 100%;
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden;
+  border: none;
+  background-color: #1a1b1e;
 }
